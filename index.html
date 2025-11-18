@@ -947,7 +947,7 @@ function isRecentlyAdded(addedDateString) {
         }
 
         // Debounce для оптимизации resize
-        function debounce(func, timeout = 25) {
+        function debounce(func, timeout = 250) {
             let timer;
             return (...args) => {
                 clearTimeout(timer);
@@ -1089,3 +1089,4 @@ function isRecentlyAdded(addedDateString) {
 </body>
 
 </html>
+
