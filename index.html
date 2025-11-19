@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои альбомы Google Фото</title>
+    <title></title>
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Photos_icon_%282020%29.svg/1024px-Google_Photos_icon_%282020%29.svg.png" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -91,13 +91,13 @@
         .logo-link { display: flex; align-items: center; margin-right: 32px; flex-shrink: 0; overflow: hidden; }
         .logo { width: 32px; height: 32px; margin-right: 8px; }
         .logo-text {
-            font-size: 20px; font-weight: 500; color: var(--color-text);
+            font-size: 18px; font-weight: 500; color: var(--color-text); text-align: center;
             transform: translateY(-2px); white-space: nowrap; overflow: hidden;
-            text-overflow: ellipsis; display: block; width: 118px;
+            text-overflow: ellipsis; display: block; width: 120px;
         }
 
         /* --- Фильтры Годов --- */
-        .filters { display: flex; flex-grow: 1; margin-right: 0; overflow: hidden; flex-shrink: 1; }
+        .filters { display: flex; flex-grow: 1; margin-right: 0; overflow: hidden; flex-shrink: 1; justify-content: center; }
         
         .filter-link {
             width: 56px; margin-right: 8px; padding: 0;
@@ -166,6 +166,8 @@
         
         .sort-content-item { display: flex; align-items: center; }
         .sort-content-item .material-icons { margin-right: 12px; font-size: 20px; color: var(--color-text); }
+        /* Добавил отступ к тексту сортировки, чтобы он не сливался с иконкой */
+        .sort-content-item span[data-sort-label] { margin-right: 8px; }
 
         /* --- Поиск --- */
         .search-container {
@@ -261,7 +263,7 @@
     <header class="header" id="main-header">
         <a href="https://photos.google.com/" class="logo-link" target="_self">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Photos_icon_%282020%29.svg/1024px-Google_Photos_icon_%282020%29.svg.png" alt="Google Photos Logo" class="logo">
-            <span class="logo-text">Google Фото</span>
+            <span class="logo-text" id="logo-text"></span>
         </a>
 
         <div class="filters" id="year-filters"></div>
@@ -274,18 +276,18 @@
         <div class="sort-dropdown">
             <div class="sort-button" id="sort-button">
                 <span class="material-icons sort-button-icon" id="sort-icon">arrow_downward</span>
-                <span id="sort-label" class="sort-button-text">Самые новые</span>
+                <span id="sort-label" class="sort-button-text"></span>
             </div>
             <div class="sort-content" id="sort-content">
-                <div class="sort-content-item" data-sort="newest"><span class="material-icons">arrow_downward</span>Самые новые</div>
-                <div class="sort-content-item" data-sort="oldest"><span class="material-icons">arrow_upward</span>Самые старые</div>
-                <div class="sort-content-item" data-sort="added"><span class="material-icons">notifications</span>Недавно добавленные</div>
+                <div class="sort-content-item" data-sort="newest"><span class="material-icons">arrow_downward</span><span data-sort-label="newest"></span></div>
+                <div class="sort-content-item" data-sort="oldest"><span class="material-icons">arrow_upward</span><span data-sort-label="oldest"></span></div>
+                <div class="sort-content-item" data-sort="added"><span class="material-icons">notifications</span><span data-sort-label="added"></span></div>
             </div>
         </div>
 
         <div class="search-container" id="search-container">
             <span class="material-icons search-icon" id="search-icon-small">search</span>
-            <input type="text" id="search-input" class="search-input" placeholder="Поиск...">
+            <input type="text" id="search-input" class="search-input" placeholder="">
             <span class="material-icons clear-button" id="clear-search-button">close</span>
         </div>
 
@@ -297,6 +299,42 @@
     <main class="album-grid" id="album-grid"></main>
 
     <script>
+        // --- ЛОКАЛИЗАЦИЯ ---
+        const TRANSLATIONS = {
+            'title': { ru: 'Мои альбомы Google Фото', uk: 'Мої альбоми Google Фото', en: 'My Google Photos albums' },
+            'logo_text': { ru: 'Google Фото', uk: 'Google Фото', en: 'Google Photos' },
+            'all_filter': { ru: 'Все', uk: 'Всі', en: 'All' },
+            'newest_sort': { ru: 'Самые новые', uk: 'Найновіші', en: 'Newest' },
+            'oldest_sort': { ru: 'Самые старые', uk: 'Найстаріші', en: 'Oldest' },
+            'added_sort': { ru: 'Недавно добавленные', uk: 'Нещодавно додані', en: 'Rescently added' },
+            'search_placeholder': { ru: 'Поиск...', uk: 'Пошук...', en: 'Search...' },
+            'not_found': { ru: 'Не найдено...', uk: 'Не знайдено...', en: 'Not found...' }
+        };
+
+        function getLocaleStrings() {
+            const userLang = (navigator.language || navigator.userLanguage).toLowerCase();
+            let lang = 'en'; // По умолчанию - английский
+
+            if (userLang.startsWith('ru')) {
+                lang = 'ru';
+            } else if (userLang.startsWith('uk')) {
+                lang = 'uk';
+            }
+
+            const strings = {};
+            for (const key in TRANSLATIONS) {
+                // Используем строку для выбранного языка, с резервом на английский
+                strings[key] = TRANSLATIONS[key][lang] || TRANSLATIONS[key]['en'];
+            }
+            
+            // Устанавливаем атрибут lang на HTML-теге
+            document.documentElement.lang = lang;
+            
+            return strings;
+        }
+
+        const STRINGS = getLocaleStrings();
+
         // *** МАССИВ АЛЬБОМОВ ***
         const albums = [
   { id: 1, title: '2025.10.18 - The Art of the Brick: LEGO', date: '2025-10-18', addedDate: '2025-10-18', url: 'https://photos.google.com/share/AF1QipOL07Gdf5WhqNH_u-U2EtRjbTKI1Xq80xNxmBLm5thlY2FqSjoaxs5Ftv28HyXP2w?key=Q1dzUzhTam9Va3V3dUJhcndaSllVUEdyTDNJd3V3', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczMuzdEDPTPi4RmHW8Qe9UVEo55ZquXneUYdPc5BA8dhbIzzYe-Vp5eqTpHgUwQAzysJe7Chm9v-BefIyQdY0HLzy1t5oB_A1NbnVNfzMWJmuyVCMmLT=w600-h315-p-k', year: '2025' },
@@ -350,59 +388,51 @@
   { id: 49, title: '2022.05.13-15 - Роудон, шале', date: '2022-05-15', addedDate: '2022-05-15', url: 'https://photos.google.com/share/AF1QipPLoBzzEh5St1ypACDvTWruYhZovAQQur3r7C8dhAxhWuphdm3GZEBzhhCRklhJOA?key=dW9wXzhCY2g2QUFvcDhXdllhd1g1X0pGMHNyajl3', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczPqfFD9DJRYyh3X8HP98mKqt2v3lKr44dn17djIgmrdwCsLYJvIqlOFrJ_HqN7G6MuuBEcaermDF68lfOLp-s6FxT2r_02OIc-1IBe1XdIIdQhdFr4L=w600-h315-p-k', year: '2022' },
   { id: 50, title: '2022.05.04 - Apocalyptica, Lacuna Coil', date: '2022-05-04', addedDate: '2022-05-04', url: 'https://photos.google.com/share/AF1QipNq_hMzl72g-VhWNvr1mPuvem3A8GMzgR-iYrUnvvnWPrC0WmW3sAKzjNFRCH6Rnw?key=eXZaV25FM05oWmFtMy00NWd1M3l4WkpDbHlmbktB', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczOlqJYnRsEjDepIAsq9iF3Qw71C8tlN1zjasp_SXTmLsGztUowipcmSga4sl2uIxXd97Qt4M8edvuSErMgH9D6Wbio9iYRwGN9WyXLlXxkw6ys158ce=w600-h315-p-k', year: '2022' },
   { id: 51, title: '2021.07.12-17 - Кемпинг Сандбанкс', date: '2021-07-17', addedDate: '2021-07-17', url: 'https://photos.google.com/share/AF1QipMkz3KmcEOgDYy2b2ufh_XjaIBXGzloS7JZjaT8Z7m4wVeHXbECX2wDjf9h5xNvPQ?key=aklpM2JnSkNLOXJzNzVsUUgtYThsem82VGMwOWx3', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczPb6wecQ0jhOLPlmYbeyeCzyVaNleKqeIwqi1mJV-fb9kjDMT6PW1T8W7ynCh8f-PHRN8cwrtaotBA724QppQoyf5-n9Oxg8s0EwdqpaM909xF7ZWUR=w600-h315-p-k', year: '2021' }
-
         ];
 
-        // Константы
+        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         const STORAGE_KEYS = {
-            SEARCH: 'searchTerm',
-            YEAR: 'yearFilter',
-            SORT: 'sortMode',
-            THEME: 'theme'
+            THEME: 'album_theme',
+            YEAR: 'album_year',
+            SORT: 'album_sort',
+            SEARCH: 'album_search'
         };
 
-        // Состояние
-        let state = {
+        const UI = {
+            grid: document.getElementById('album-grid'),
+            logoText: document.getElementById('logo-text'),
+            filtersContainer: document.getElementById('year-filters'),
+            menuButton: document.getElementById('menu-button'),
+            menuContent: document.getElementById('menu-content'),
+            menuDropdown: document.querySelector('.menu-dropdown'),
+            sortButton: document.getElementById('sort-button'),
+            sortContent: document.getElementById('sort-content'),
+            sortIcon: document.getElementById('sort-icon'),
+            sortLabel: document.getElementById('sort-label'),
+            searchInput: document.getElementById('search-input'),
+            clearButton: document.getElementById('clear-search-button'),
+            themeToggle: document.getElementById('theme-toggle'),
+        };
+
+        const state = {
             year: 'all',
             sort: 'newest',
             search: ''
         };
 
-        // DOM Элементы
-        const UI = {
-            filtersContainer: document.getElementById('year-filters'),
-            menuContent: document.getElementById('menu-content'),
-            menuButton: document.getElementById('menu-button'),
-            menuDropdown: document.querySelector('.menu-dropdown'),
-            sortButton: document.getElementById('sort-button'),
-            sortContent: document.getElementById('sort-content'),
-            sortLabel: document.getElementById('sort-label'),
-            sortIcon: document.getElementById('sort-icon'),
-            searchInput: document.getElementById('search-input'),
-            clearButton: document.getElementById('clear-search-button'),
-            themeToggle: document.getElementById('theme-toggle'),
-            grid: document.getElementById('album-grid'),
-            searchContainer: document.getElementById('search-container')
-        };
-
-        // --- Вспомогательные функции ---
-
-        function isRecentlyAdded(dateString) {
-            if (!dateString || dateString.length !== 10) return false;
-            const addedDate = new Date(dateString);
-            const limitDate = new Date();
-            limitDate.setDate(limitDate.getDate() - 30); // 30 дней считается "новым"
-            return !isNaN(addedDate) && addedDate > limitDate;
+        // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
+        function isRecentlyAdded(addedDateStr) {
+            // Считаем "недавно добавленными" альбомы, добавленные в последние 7 дней
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const addedDate = new Date(addedDateStr);
+            return addedDate > oneWeekAgo;
         }
 
         function createAlbumCard(album) {
             const card = document.createElement('div');
             card.className = 'album-card';
-            
-            const badgeHTML = isRecentlyAdded(album.addedDate) 
-                ? '<div class="new-badge"><span class="material-icons">notifications</span></div>' 
-                : '';
-
+            const badgeHTML = isRecentlyAdded(album.addedDate) ? '<div class="new-badge"><span class="material-icons">notifications</span></div>' : '';
             card.innerHTML = `
                 <a href="${album.url}" class="album-card-link" target="_self">
                     <div class="album-preview" style="background-image: url('${album.previewUrl}')">
@@ -421,11 +451,20 @@
         function getSortedAlbums() {
             let sorted = [...albums];
             const compareDates = (a, b) => new Date(a).getTime() - new Date(b).getTime();
-
+            
             switch (state.sort) {
-                case 'newest': sorted.sort((a, b) => b.date.localeCompare(a.date)); break;
-                case 'oldest': sorted.sort((a, b) => a.date.localeCompare(b.date)); break;
-                case 'added': sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate)); break;
+                case 'newest':
+                    // Сортировка от новых альбомов к старым (по дате альбома, убывание)
+                    sorted.sort((a, b) => b.date.localeCompare(a.date));
+                    break;
+                case 'oldest':
+                    // Сортировка от старых альбомов к новым (по дате альбома, возрастание)
+                    sorted.sort((a, b) => a.date.localeCompare(b.date));
+                    break;
+                case 'added':
+                    // Сортировка по дате добавления (убывание)
+                    sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate));
+                    break;
             }
             return sorted;
         }
@@ -448,8 +487,10 @@
             if (result.length > 0) {
                 result.forEach(album => UI.grid.appendChild(createAlbumCard(album)));
             } else {
-                UI.grid.innerHTML = `<p style="text-align: center; width: 100%; color: var(--color-text); padding: 20px;">Нет альбомов.</p>`;
+                // Используем локализованную строку "Не найдено..."
+                UI.grid.innerHTML = `<p style="text-align: center; width: 100%; color: var(--color-text); padding: 20px;">${STRINGS.not_found}</p>`;
             }
+
             updateActiveClasses();
         }
 
@@ -458,6 +499,7 @@
             document.querySelectorAll('.filter-link, .menu-content-item').forEach(el => {
                 el.classList.toggle('active', el.getAttribute('data-year') === state.year);
             });
+
             // Сортировка
             document.querySelectorAll('.sort-content-item').forEach(el => {
                 el.classList.toggle('active', el.getAttribute('data-sort') === state.sort);
@@ -466,9 +508,10 @@
 
         function updateSortButtonUI() {
             const map = {
-                newest: { icon: 'arrow_downward', label: 'Самые новые' },
-                oldest: { icon: 'arrow_upward', label: 'Самые старые' },
-                added: { icon: 'notifications', label: 'Недавно добавленные' }
+                // Используем локализованные строки
+                newest: { icon: 'arrow_downward', label: STRINGS.newest_sort },
+                oldest: { icon: 'arrow_upward', label: STRINGS.oldest_sort },
+                added: { icon: 'notifications', label: STRINGS.added_sort }
             };
             const current = map[state.sort] || map.newest;
             UI.sortIcon.textContent = current.icon;
@@ -493,28 +536,25 @@
 
         // --- Инициализация Фильтров ---
         function initYearFilters() {
-            const years = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']; // Добавьте свои годы
-            UI.filtersContainer.innerHTML = '';
+            const years = [...new Set(albums.map(a => a.year))].sort((a, b) => b - a);
 
-            const createLink = (text, val, isMenu) => {
-                const el = document.createElement('a');
-                el.className = isMenu ? 'menu-content-item' : 'filter-link';
+            // Вспомогательная функция для создания ссылок фильтра
+            const createLink = (text, year, isMenuItem) => {
+                const el = document.createElement(isMenuItem ? 'div' : 'a');
+                el.className = isMenuItem ? 'menu-content-item' : 'filter-link';
+                el.setAttribute('data-year', year);
                 el.textContent = text;
-                el.setAttribute('data-year', val);
-                if (state.year === val) el.classList.add('active');
-                
                 el.onclick = (e) => {
                     e.stopPropagation();
-                    state.year = val;
-                    localStorage.setItem(STORAGE_KEYS.YEAR, val);
+                    state.year = year;
+                    localStorage.setItem(STORAGE_KEYS.YEAR, year);
                     renderAlbums();
-                    UI.menuContent.classList.remove('show');
                 };
                 return el;
             };
 
-            // Сначала рендерим ВСЕ фильтры в шапку
-            UI.filtersContainer.appendChild(createLink('Все', 'all', false));
+            // создаем ссылку "Все" и добавляем ее в шапку
+            UI.filtersContainer.appendChild(createLink(STRINGS.all_filter, 'all', false)); // Используем локализованную строку
             years.forEach(y => UI.filtersContainer.appendChild(createLink(y, y, false)));
 
             // Функция пересчета видимости (Reset -> Measure -> Distribute)
@@ -522,7 +562,6 @@
                 // 1. Сброс: Скрываем меню, чтобы узнать реальную полную ширину
                 UI.menuDropdown.style.display = 'none';
                 const allElements = Array.from(UI.filtersContainer.children);
-                
                 // Показываем все элементы временно, чтобы offsetWidth был корректен
                 allElements.forEach(el => el.style.display = 'inline-flex');
 
@@ -530,15 +569,14 @@
                 const containerWidth = UI.filtersContainer.offsetWidth;
                 const itemWidth = 64; // 56px + 8px margin
                 const menuBtnWidth = 48; // 40px + 8px margin
-
                 const totalNeeded = allElements.length * itemWidth;
 
                 // 3. Распределение
                 UI.menuContent.innerHTML = '';
-                
+
                 // Если всё влезает без меню
                 if (totalNeeded <= containerWidth) {
-                    return; 
+                    return;
                 }
 
                 // Если не влезает, вычитаем место под кнопку
@@ -567,13 +605,24 @@
             const debouncedResize = debounce(updateFiltersVisibility, 50);
             window.addEventListener('resize', debouncedResize);
             window.addEventListener('orientationchange', () => setTimeout(updateFiltersVisibility, 300));
-            
+
             // Первый запуск
             requestAnimationFrame(updateFiltersVisibility);
         }
 
         // --- Инициализация ---
         document.addEventListener('DOMContentLoaded', () => {
+            // --- Локализация статических элементов ---
+            document.title = STRINGS.title;
+            UI.logoText.textContent = STRINGS.logo_text;
+            UI.searchInput.placeholder = STRINGS.search_placeholder;
+            
+            // Заполняем элементы выпадающего списка сортировки
+            document.querySelector('.sort-content-item[data-sort="newest"]').querySelector('span[data-sort-label]').textContent = STRINGS.newest_sort;
+            document.querySelector('.sort-content-item[data-sort="oldest"]').querySelector('span[data-sort-label]').textContent = STRINGS.oldest_sort;
+            document.querySelector('.sort-content-item[data-sort="added"]').querySelector('span[data-sort-label]').textContent = STRINGS.added_sort;
+
+
             // Загрузка из Storage
             state.year = localStorage.getItem(STORAGE_KEYS.YEAR) || 'all';
             state.sort = localStorage.getItem(STORAGE_KEYS.SORT) || 'newest';
@@ -582,23 +631,32 @@
             // UI Setup
             UI.searchInput.value = state.search;
             if(state.search) UI.clearButton.style.display = 'block';
-            
             updateSortButtonUI();
-            initYearFilters();
-            renderAlbums();
-
+            
             // Event Listeners
             UI.searchInput.addEventListener('input', handleSearchInput);
-            
-            UI.clearButton.onclick = (e) => {
-                e.stopPropagation();
-                state.search = '';
+            UI.clearButton.addEventListener('click', () => {
                 UI.searchInput.value = '';
-                localStorage.removeItem(STORAGE_KEYS.SEARCH);
-                UI.clearButton.style.display = 'none';
-                renderAlbums();
-                UI.searchInput.focus();
-            };
+                handleSearchInput({ target: UI.searchInput });
+            });
+
+            UI.sortButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                UI.sortContent.classList.toggle('show');
+                UI.menuContent.classList.remove('show');
+            });
+
+            document.querySelectorAll('.sort-content-item').forEach(item => {
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    const newSort = item.getAttribute('data-sort');
+                    state.sort = newSort;
+                    localStorage.setItem(STORAGE_KEYS.SORT, newSort);
+                    updateSortButtonUI();
+                    renderAlbums();
+                    UI.sortContent.classList.remove('show');
+                };
+            });
 
             UI.menuButton.onclick = (e) => {
                 e.stopPropagation();
@@ -606,43 +664,23 @@
                 UI.sortContent.classList.remove('show');
             };
 
-            UI.sortButton.onclick = (e) => {
-                e.stopPropagation();
-                UI.sortContent.classList.toggle('show');
-                UI.menuContent.classList.remove('show');
+
+            initYearFilters();
+            renderAlbums();
+
+            // --- ТЕМНАЯ / СВЕТЛАЯ ТЕМА ---
+
+            // 1. ПРОВЕРКА НАЧАЛЬНОГО СОСТОЯНИЯ
+            const applyTheme = (isDark) => {
+                document.body.classList.toggle('dark-theme', isDark);
+                UI.themeToggle.textContent = isDark ? 'light_mode' : 'nightlight_round';
             };
 
-            document.querySelectorAll('.sort-content-item').forEach(item => {
-                item.onclick = (e) => {
-                    e.stopPropagation();
-                    state.sort = item.getAttribute('data-sort');
-                    localStorage.setItem(STORAGE_KEYS.SORT, state.sort);
-                    updateSortButtonUI();
-                    renderAlbums();
-                    UI.sortContent.classList.remove('show');
-                };
-            });
-
-	    // === Theme Toggle (С автоматическим переключением) ===
-
+            const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-            // Функция, которая просто применяет тему (чтобы не дублировать код)
-            function applyTheme(isDark) {
-                if (isDark) {
-                    document.body.classList.add('dark-theme');
-                    UI.themeToggle.textContent = 'light_mode'; 
-                } else {
-                    document.body.classList.remove('dark-theme');
-                    UI.themeToggle.textContent = 'nightlight_round';
-                }
-            }
-
-            // 1. Инициализация при загрузке
-            const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
-            
             if (savedTheme) {
-                // Если пользователь уже выбирал тему вручную — уважаем его выбор
+                // Если есть ручной выбор - используем его
                 applyTheme(savedTheme === 'dark');
             } else {
                 // Если нет — ставим как в системе сейчас
