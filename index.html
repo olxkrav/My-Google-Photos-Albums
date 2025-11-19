@@ -8,564 +8,267 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* === Переменные Цветов (Dark/Light Theme) === */
+        /* === Переменные Цветов === */
         :root {
-            --color-text-light: #444746; /* Текст шапки, карточек (body) (почти черный) */
-            --color-text-dark: #C4C7C5; /* Текст шапки, карточек (body.dark-theme)(грязно-белый) */
-            --color-background-light: #F0F4F9; /* Фон (body) (почти белый) */
-            --color-background-dark: #1E1F20; /* Фон(body.dark-theme) (почти черный) */
-            --color-surface-light: #d8dadb; /* Подсветка кнопок, фон сортировки, поиска... (светло-серый) */
-            --color-surface-dark: #3c4043; /* Подсветка кнопок, фон сортировки, поиска... (светло-серый) */
-            --color-card-background-light: #ffffff; /* Фон карточек, фон меню годов и сортировки, фон колокольчика (белый) */
-            --color-card-background-dark: #292a2e; /* Фон карточек, фон меню годов и сортировки, фон колокольчика (темно-серый) */
-            --color-divider-light: #C4C7C5; /* Разделитель шапки светлой темы */
-            --color-divider-dark: #444746; /* Разделитель шапки темной темы */
-            --color-link-active-light: #004A77; /* Активный год, пункт меню (черный) */
-            --color-link-active-dark: #C2E7FF; /* Активный год, пункт меню (голубой) */
-            --color-link-active-highlight-light: #C2E7FF; /* Обводка Активный год, пункт меню (голубой) */
-            --color-link-active-highlight-dark: #004A77; /* Обводка Активный год, пункт меню (голубой) */
-	    --color-badge-light: #004A77; /* Колокольчик (голубой) */
-	    --color-badge-dark: #C2E7FF; /* Колокольчик (голубой) */
+            --color-text-light: #444746;
+            --color-text-dark: #C4C7C5;
+            --color-background-light: #F0F4F9;
+            --color-background-dark: #1E1F20;
+            --color-surface-light: #d8dadb;
+            --color-surface-dark: #3c4043;
+            --color-card-background-light: #ffffff;
+            --color-card-background-dark: #292a2e;
+            --color-divider-light: #C4C7C5;
+            --color-divider-dark: #444746;
+            --color-link-active-light: #004A77;
+            --color-link-active-dark: #C2E7FF;
+            --color-link-active-highlight-light: #C2E7FF;
+            --color-link-active-highlight-dark: #004A77;
+            --color-badge-light: #004A77;
+            --color-badge-dark: #C2E7FF;
             --color-shadow-light: rgba(60, 64, 67, 0.15);
             --color-shadow-dark: rgba(0, 0, 0, 0.5);
-            --font-size-small: 14px; /* Единый размер шрифта для интерактивных элементов */
-            --header-item-spacing: 8px; /* Одинаковый промежуток в шапке */
-            --header-element-height: 36px; /* Одинаковая высота кнопок */
+            --font-size-small: 14px;
+            --header-item-spacing: 8px;
+            --header-element-height: 36px;
             --search-width-desktop: 180px; 
             --search-width-mobile: 130px; 
         }
 
-        /* --- Стили для Темной Темы --- */
+        /* --- Темы --- */
         body.dark-theme {
-            --color-text: var(--color-text-dark); /* Цвет всего текста темной темы (кроме активных) */
-            --color-text-on-surface: #e8eaed; /* ??? */
-            --color-background: var(--color-background-dark); /* Цвет шапки и фона страницы */
-            --color-surface: var(--color-surface-dark); /* Подсветка кнопок смены темы, меню годов, годов(!), текущего года (!), пунктов меню годов и сортировки, поиска темной темы */
-            --color-card-background: var(--color-card-background-dark); /* фон карточек, колокольчика, меню годов, меню сортировки темной темы */
-            --color-divider: var(--color-divider-dark); /* Разделитель шапки темной темы */
-            --color-shadow: var(--color-shadow-dark); /* Тень под шапкой, меню, карточками, темная тема */
-	    --color-link-active: var(--color-link-active-dark); /* Активный год, пункт меню годов, сортировки, темная тема */
-	    --color-link-active-highlight: var(--color-link-active-highlight-dark);
-	    --color-badge: var(--color-badge-dark);
+            --color-text: var(--color-text-dark);
+            --color-text-on-surface: #e8eaed;
+            --color-background: var(--color-background-dark);
+            --color-surface: var(--color-surface-dark);
+            --color-card-background: var(--color-card-background-dark);
+            --color-divider: var(--color-divider-dark);
+            --color-shadow: var(--color-shadow-dark);
+            --color-link-active: var(--color-link-active-dark);
+            --color-link-active-highlight: var(--color-link-active-highlight-dark);
+            --color-badge: var(--color-badge-dark);
         }
 
-        /* --- Стили для Светлой Темы (По умолчанию) --- */
-        body {
-            --color-text: var(--color-text-light); /* Цвет всего текста светлой темы (кроме активных) */
-            --color-text-on-surface: #202124; /* ??? */ 
-            --color-background: var(--color-background-light); /* Цвет шапки и фона страницы */
-            --color-surface: var(--color-surface-light); /* Подсветка кнопок смены темы, меню годов, годов, пунктов меню годов и сортировки, поиска светлой темы */
-            --color-card-background: var(--color-card-background-light); /* фон карточек, колокольчика, меню годов, меню сортировки светлой темы */
-            --color-divider: var(--color-divider-light); /* Разделитель шапки светлой темы */
-            --color-shadow: var(--color-shadow-light); /* Тень под шапкой, меню, карточками, светлая тема */
-	    --color-link-active: var(--color-link-active-light); /* Активный год, пункт меню годов, сортировки, светлая тема */
-	    --color-link-active-highlight: var(--color-link-active-highlight-light);
-	    --color-badge: var(--color-badge-light);
-
+        body { /* Light Theme Defaults */
+            --color-text: var(--color-text-light);
+            --color-text-on-surface: #202124;
+            --color-background: var(--color-background-light);
+            --color-surface: var(--color-surface-light);
+            --color-card-background: var(--color-card-background-light);
+            --color-divider: var(--color-divider-light);
+            --color-shadow: var(--color-shadow-light);
+            --color-link-active: var(--color-link-active-light);
+            --color-link-active-highlight: var(--color-link-active-highlight-light);
+            --color-badge: var(--color-badge-light);
         }
 
         /* === Общие Стили === */
-        * {
-            box-sizing: border-box;
-            /* Скрытие полосы прокрутки для Firefox */
-            scrollbar-width: none; 
-        }
-
-        /* Скрытие полосы прокрутки для WebKit (Chrome, Safari, Edge) */
-        *::-webkit-scrollbar {
-            display: none; 
-            width: 0; 
-            height: 0;
-        }
-
+        * { box-sizing: border-box; scrollbar-width: none; }
+        *::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
         body {
             font-family: 'Roboto', Arial, sans-serif;
             margin: 0;
             padding-top: 64px; 
-            background-color: var(--color-background); /* Фон страницы */
-            color: var(--color-text-on-surface); /* ??? */
-            transition: background-color 0.3s, color 0.3s; /* Скорость смены темы страницы */
+            background-color: var(--color-background);
+            color: var(--color-text-on-surface);
+            transition: background-color 0.3s, color 0.3s;
         }
         
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
+        a { text-decoration: none; color: inherit; }
 
-        /* === Шапка (Header) === */
+        /* === Шапка === */
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            padding: 0 24px; /* Desktop padding */
-            background-color: var(--color-background); /* Шапка */
-            border-bottom: 1px solid var(--color-divider); /* Ширина и цвет разделителя шапки */
-            box-shadow: 0 2px 4px var(--color-shadow); /* Ширина и цвет тени шапки */
+            position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+            display: flex; align-items: center; padding: 0 24px;
+            background-color: var(--color-background);
+            border-bottom: 1px solid var(--color-divider);
+            box-shadow: 0 2px 4px var(--color-shadow);
             z-index: 1000;
-            transition: background-color 0.3s, border-color 0.3s;  /* Скорость смены темы шапки */
+            transition: background-color 0.3s, border-color 0.3s;
         }
         
-        .logo-link {
-            display: flex;
-            align-items: center;
-            margin-right: 32px;
-            flex-shrink: 0; 
-            overflow: hidden; 
-        }
-        .logo {
-            width: 32px;
-            height: 32px;
-            margin-right: 8px;
-        }
-        
+        .logo-link { display: flex; align-items: center; margin-right: 32px; flex-shrink: 0; overflow: hidden; }
+        .logo { width: 32px; height: 32px; margin-right: 8px; }
         .logo-text {
-            font-size: 20px;
-            font-weight: 500;
-            color: var(--color-text); 
-            transform: translateY(-2px); 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-	    display: block;
-	    width: 118px;
+            font-size: 20px; font-weight: 500; color: var(--color-text);
+            transform: translateY(-2px); white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis; display: block; width: 118px;
         }
 
-/* --- Фильтры Годов --- */
+        /* --- Фильтры Годов --- */
+        .filters { display: flex; flex-grow: 1; margin-right: 0; overflow: hidden; flex-shrink: 1; }
+        
         .filter-link {
-            /* === НОВЫЕ СТИЛИ (Фикс. ширина) === */
-            width: 56px; /* Сам элемент 56px */
-            margin-right: 8px; /* Отступ 8px. Итого: 64px */
-            padding: 0; /* Убираем паддинги, чтобы не влияли на ширину */
-            
-            display: inline-flex; /* Чтобы центрировать текст */
-            justify-content: center;
-            align-items: center;
-            
-            height: 32px; /* Высота как у остальных кнопок */
-            border-radius: 16px;
-            font-size: var(--font-size-small);
-            font-weight: 500;
+            width: 56px; margin-right: 8px; padding: 0;
+            display: inline-flex; justify-content: center; align-items: center;
+            height: 32px; border-radius: 16px;
+            font-size: var(--font-size-small); font-weight: 500;
             color: var(--color-text);
             transition: background-color 0.2s, color 0.2s;
-            cursor: pointer;
-            user-select: none;
-            flex-shrink: 0;
-            overflow: hidden;
-            box-sizing: border-box;
+            cursor: pointer; user-select: none; flex-shrink: 0;
         }
+        .filter-link:hover { background-color: var(--color-surface); }
+        .filter-link.active { color: var(--color-link-active); background-color: var(--color-link-active-highlight); }
         
-        /* --- Выпадающие Меню (Гамбургер и Сортировки) --- */
+        /* --- Меню и Дропдауны --- */
         .menu-content, .sort-content {
-            display: none;
-            position: absolute;
-            top: 48px;
-            background-color: var(--color-card-background); /* Фон меню */
+            display: none; position: absolute; top: 48px;
+            background-color: var(--color-card-background);
             box-shadow: 0 4px 8px var(--color-shadow);
-            border-radius: 8px;
-            width: 64px;
-            z-index: 1001;
-            padding: 0; 
+            border-radius: 8px; width: 64px; z-index: 100; padding: 0; 
         }
-        .menu-content.show, .sort-content.show {
-            display: block;
-        }
+        .menu-content.show, .sort-content.show { display: block; }
         
-        /* Стили для меню годов */
         .menu-content {
-            left: 0; 
-            max-height: calc(16 * 1.4em + 20px); 
-            overflow-y: auto; 
-            scrollbar-width: thin; 
-            scrollbar-color: var(--color-text) var(--color-surface);
-        }
-        /* Стилизация скроллбара для WebKit */
-        .menu-content::-webkit-scrollbar {
-            display: block; 
-            width: 8px;
-        }
-        .menu-content::-webkit-scrollbar-thumb {
-            background-color: var(--color-text);
-            border-radius: 10px;
-        }
-        .menu-content::-webkit-scrollbar-track {
-            background: var(--color-surface);
+            left: 0; max-height: calc(16 * 1.4em + 20px); overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: var(--color-text) var(--color-surface);
         }
         
-        /* Стили для меню сортировки */
         .sort-content {
-            left: 50%; /* ВЫРАВНИВАНИЕ ПО ЦЕНТРУ КНОПКИ */
-            transform: translateX(-50%); 
-            max-height: calc(16 * 1.4em + 20px); 
-            overflow-y: auto; 
-            scrollbar-width: thin; 
-            scrollbar-color: var(--color-text) var(--color-surface);
-            width: 200px; 
-        }
-        .sort-content::-webkit-scrollbar {
-            display: block; 
-            width: 8px;
-        }
-        .sort-content::-webkit-scrollbar-thumb {
-            background-color: var(--color-text);
-            border-radius: 10px;
-        }
-        .sort-content::-webkit-scrollbar-track {
-            background: var(--color-surface);
+            left: 50%; transform: translateX(-50%);
+            max-height: calc(16 * 1.4em + 20px); overflow-y: auto;
+            width: 200px;
         }
 
-
-        /* Стиль пунктов меню */
         .menu-content-item, .sort-content-item {
-            display: block;
-            padding: 10px 8px; 
-            font-size: var(--font-size-small); 
-            font-weight: 500;
-            color: var(--color-text); 
-            cursor: pointer;
-            white-space: nowrap;
-            position: relative;
+            display: block; padding: 10px 8px;
+            font-size: var(--font-size-small); font-weight: 500;
+            color: var(--color-text); cursor: pointer; white-space: nowrap;
         }
-        .menu-content-item:hover, .sort-content-item:hover {
-            background-color: var(--color-surface);
-        }
-        
-        /* ПОДСВЕТКА ТЕКУЩЕГО ГОДА И СОРТИРОВКИ В МЕНЮ */
+        .menu-content-item:hover, .sort-content-item:hover { background-color: var(--color-surface); }
         .menu-content-item.active, .sort-content-item.active {
-            color: var(--color-link-active);
-            font-weight: 500;
-	    background-color: var(--color-link-active-highlight); /* Обводка текущего года в меню годов и сортировки */
+            color: var(--color-link-active); font-weight: 500;
+            background-color: var(--color-link-active-highlight);
         }
         
-        /* Гамбургер-Меню (для годов) */
-        .menu-dropdown {
-            position: relative;
-            display: none;
-            margin-right: var(--header-item-spacing); 
-            flex-shrink: 0;
+        .menu-dropdown { position: relative; display: none; margin-right: var(--header-item-spacing); flex-shrink: 0; }
+        .menu-button {
+            width: 40px; height: 40px; padding: 0;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; cursor: pointer; transition: background-color 0.2s; color: var(--color-text); 
         }
-        
-        /* Меню Сортировки */
-        .sort-dropdown {
-            margin-right: 12px; 
-            position: relative;
-            flex-shrink: 0;
-        }
+        .menu-button:hover { background-color: var(--color-surface); }
+
+        /* --- Сортировка --- */
+        .sort-dropdown { margin-right: 12px; position: relative; flex-shrink: 0; }
         .sort-button {
-            display: flex;
-            align-items: center;
-            padding: 0 12px 0 8px; 
-            height: var(--header-element-height); 
-            width: 200px; 
-            border-radius: 18px;
-            background-color: var(--color-surface);
-            font-size: var(--font-size-small);
-            font-weight: 500;
-            cursor: pointer;
-            user-select: none;
-            color: var(--color-text); 
+            display: flex; align-items: center; padding: 0 12px 0 8px;
+            height: var(--header-element-height); width: 200px;
+            border-radius: 18px; background-color: var(--color-surface);
+            font-size: var(--font-size-small); font-weight: 500;
+            cursor: pointer; user-select: none; color: var(--color-text);
             transition: background-color 0.2s, width 0.3s, padding 0.3s;
         }
-        .sort-button:hover {
-            filter: brightness(0.9);
-        }
-        /* Иконка на самой кнопке сортировки */
-        .sort-button-icon {
-            margin-right: 8px; 
-            font-size: 20px;
-            color: var(--color-text); 
-        }
-        .sort-button-text {
-            /* Текст "Самые новые" */
-            transition: opacity 0.3s;
-        }
+        .sort-button:hover { filter: brightness(0.9); }
+        .sort-button-icon { margin-right: 8px; font-size: 20px; color: var(--color-text); }
+        .sort-button-text { transition: opacity 0.3s; }
         
-        /* Иконки в меню сортировки */
-        .sort-content-item {
-            display: flex;
-            align-items: center;
-        }
-        .sort-content-item .material-icons {
-            margin-right: 12px;
-            font-size: 20px;
-            color: var(--color-text); 
-        }
+        .sort-content-item { display: flex; align-items: center; }
+        .sort-content-item .material-icons { margin-right: 12px; font-size: 20px; color: var(--color-text); }
 
-        /* --- Поле Поиска --- */
+        /* --- Поиск --- */
         .search-container {
-            margin-right: var(--header-item-spacing); /* Now 8px */
-            position: relative;
-            flex-grow: 0; 
-            width: 180px; /* Теперь 180px */
-            transition: width 0.3s, flex-grow 0.3s, max-width 0.3s;
-            flex-shrink: 0; /* ФИКСИРОВАННАЯ ШИРИНА */
-
+            margin-right: var(--header-item-spacing); position: relative;
+            flex-grow: 0; width: 180px; transition: width 0.3s; flex-shrink: 0;
         }
         .search-input {
-            padding: 0 36px 0 40px; 
-            border: none;
-            border-radius: 20px;
-            background-color: var(--color-surface);
-            color: var(--color-text); 
-            font-size: var(--font-size-small); 
-            width: 100%; 
-            outline: none;
-            transition: background-color 0.3s;
-            height: var(--header-element-height); 
+            padding: 0 36px 0 40px; border: none; border-radius: 20px;
+            background-color: var(--color-surface); color: var(--color-text);
+            font-size: var(--font-size-small); width: 100%; outline: none;
+            transition: background-color 0.3s; height: var(--header-element-height); 
         }
-	.search-input:hover {
-            background-color: var(--color-card-background);
-        }
-	.search-input:focus {
-            background-color: var(--color-card-background);
-        }
-        /* Иконка поиска */
+        .search-input:hover, .search-input:focus { background-color: var(--color-card-background); }
         .search-icon {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-text); 
-            pointer-events: none; 
-            transition: opacity 0.3s, left 0.3s, right 0.3s;
-            opacity: 1; /* Иконка всегда видна */
-	    z-index: 10;
+            position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+            color: var(--color-text); pointer-events: none; opacity: 1; z-index: 10;
         }
-        /* Кнопка очистки */
         .clear-button {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-text); 
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 50%;
-            font-size: 20px;
-            transition: background-color 0.2s;
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            color: var(--color-text); cursor: pointer; padding: 4px;
+            border-radius: 50%; font-size: 20px; display: none;
         }
-        .clear-button:hover {
-            background-color: var(--color-background);
-        }
+        .clear-button:hover { background-color: var(--color-background); }
 
-        /* --- Кнопка Переключения Темы --- */
-.theme-button {
-    margin-right: var(--header-item-spacing);
-    
-    /* === ИЗМЕНЕНИЯ: Фиксированный размер === */
-    width: 40px;             /* Явная ширина */
-    height: 40px;            /* Явная высота */
-    padding: 0;              /* Убираем отступы */
-    display: flex;           /* Включаем Flexbox */
-    align-items: center;     /* Центрируем по вертикали */
-    justify-content: center; /* Центрируем по горизонтали */
-
-    /* Остальные стили без изменений */
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.3s;
-    color: var(--color-text); 
-    flex-shrink: 0;
-}
-        .theme-button:hover {
-            background-color: var(--color-surface);
+        /* --- Theme Button & Profile --- */
+        .theme-button {
+            margin-right: var(--header-item-spacing); width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; cursor: pointer; color: var(--color-text); flex-shrink: 0;
         }
-
-	/* === Значок Недавно Добавленного Альбома (New) === */
-        .new-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--color-card-background); /* Фон колокольчика */
-            box-shadow: 0 1px 3px var(--color-shadow);
-            z-index: 10;
-        }
-        .new-badge .material-icons {
-            font-size: 20px;
-            color: var(--color-link-active); /* Цвет колокольчика */
-        }
-
-        /* === Карточка Альбома === */
-        .album-info {
-            padding: 4px 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; 
-            min-height: 48px; 
-        }
-
-        .album-title {
-            font-size: var(--font-size-small); 
-            font-weight: 500;
-            line-height: 1.4;
-            color: var(--color-text); 
-            display: -webkit-box;
-            -webkit-line-clamp: 2; 
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            max-height: calc(1.4em * 2); 
-        }
+        .theme-button:hover { background-color: var(--color-surface); }
         
-        /* --- Остальные стили для Header и Grid --- */
-        .filters {
-            display: flex;
-            flex-grow: 1; 
-            margin-right: 0; 
-            overflow: hidden;
-            flex-shrink: 1;
-        }
-        .filter-link:hover {
-            background-color: var(--color-surface);
-        }
-        .filter-link.active {
-            color: var(--color-link-active);
-            background-color: var(--color-link-active-highlight); /* Обводка текущего года в шапке */
-        }
-.menu-button {
-    /* === ИЗМЕНЕНИЯ: Фиксированный размер === */
-    width: 40px;             /* Явная ширина */
-    height: 40px;            /* Явная высота */
-    padding: 0;              /* Убираем отступы */
-    display: flex;           /* Включаем Flexbox */
-    align-items: center;     /* Центрируем по вертикали */
-    justify-content: center; /* Центрируем по горизонтали */
-    
-    /* Остальные стили без изменений */
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    color: var(--color-text); 
-}
-        .menu-button:hover {
-            background-color: var(--color-surface); /* Подсветка кнопки меню годоы */
-        }
         .profile-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            border: 2px solid var(--color-surface); 
-            flex-shrink: 0;
+            width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+            cursor: pointer; border: 2px solid var(--color-surface); flex-shrink: 0;
         }
+
+        /* --- Карточки --- */
         .album-grid {
-            padding: 24px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 24px;
+            padding: 24px; display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px;
         }
         .album-card {
-            background-color: var(--color-card-background); /* Фон карточек */
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px var(--color-shadow), 0 1px 2px var(--color-shadow);
-            transition: box-shadow 0.3s, transform 0.3s, background-color 0.3s;
+            background-color: var(--color-card-background); border-radius: 8px;
+            overflow: hidden; box-shadow: 0 1px 3px var(--color-shadow);
+            transition: box-shadow 0.3s, transform 0.3s;
         }
         .album-card:hover {
-            box-shadow: 0 4px 8px var(--color-shadow), 0 6px 15px var(--color-shadow);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--color-shadow); transform: translateY(-2px);
         }
-        .album-card-link {
-            display: block;
-        }
+        .album-card-link { display: block; }
         .album-preview {
-            width: 100%;
-            padding-top: 56.25%; 
-            position: relative;
-            overflow: hidden;
-            background-size: cover;
-            background-position: center;
+            width: 100%; padding-top: 56.25%; position: relative;
+            background-size: cover; background-position: center;
         }
+        .new-badge {
+            position: absolute; top: 8px; right: 8px; width: 30px; height: 30px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            background-color: var(--color-card-background); box-shadow: 0 1px 3px var(--color-shadow);
+            z-index: 10;
+        }
+        .new-badge .material-icons { font-size: 20px; color: var(--color-link-active); }
         
-        /* === Адаптивные Стили (< 750px) === */
-        @media (max-width: 750px) {
-            /* Reduced padding for mobile header */
-            .header {
-                padding: 0 10px; 
-            }
-            
-            /* Надпись Google Фото исчезает */
-            .logo-text {
-                display: none;
-            }
-            /* Remove margin-right from logo link in mobile */
-            .logo-link {
-                margin-right: 0; 
-            }
-            
-            /* Кнопка Сортировки становится иконкой */
-            .sort-dropdown {
-                margin-right: var(--header-item-spacing); /* Now 8px */
-            }
-            .sort-button {
-                width: var(--header-element-height); 
-                padding: 0 8px; 
-                justify-content: center;
-            }
-            .sort-button-icon {
-                margin-right: 0;
-            }
-            /* Скрываем текст "Самые новые" и т.д. */
-            .sort-button-text {
-                display: none;
-                opacity: 0;
-            }
-            /* Центрируем меню сортировки по иконке */
-            .sort-content {
-                left: 50%; 
-                transform: translateX(-50%);
-	    }
-	/* 3. Поле Поиска (Фиксированная ширина) */
-            .search-container {
-		width: var(--search-width-mobile);
-            }
+        .album-info {
+            padding: 4px 12px; display: flex; flex-direction: column;
+            justify-content: center; min-height: 48px; 
+        }
+        .album-title {
+            font-size: var(--font-size-small); font-weight: 500; line-height: 1.4;
+            color: var(--color-text); display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden; max-height: calc(1.4em * 2); 
+        }
 
-            .search-input {
-                 /* Возвращаем отступ для иконки */
-                padding: 0 36px 0 40px; 
-                width: 100%;
-            }
-            .search-icon {
-                /* Возвращаем иконку на место */
-                left: 8px;
-                transform: translateY(-50%);
-                opacity: 1;
-                right: auto;
-            }
+        /* === Mobile Styles === */
+        @media (max-width: 750px) {
+            .header { padding: 0 10px; }
+            .logo-text { display: none; }
+            .logo-link { margin-right: 0; }
             
-            .filters {
-                flex-grow: 0; 
-                flex-shrink: 1;
-                margin-right: 0; /* Убеждаемся, что отступ убран и здесь */
-            }
+            .sort-dropdown { margin-right: var(--header-item-spacing); }
+            .sort-button { width: var(--header-element-height); padding: 0 8px; justify-content: center; }
+            .sort-button-icon { margin-right: 0; }
+            .sort-button-text { display: none; }
+            .sort-content { left: 50%; transform: translateX(-50%); }
+
+            .search-container { width: var(--search-width-mobile); }
+            .filters { flex-grow: 0; }
         }
     </style>
 </head>
 <body class="light-theme">
 
     <header class="header" id="main-header">
-        <a href="https://photos.google.com/" class="logo-link">
+        <a href="https://photos.google.com/" class="logo-link" target="_self">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Photos_icon_%282020%29.svg/1024px-Google_Photos_icon_%282020%29.svg.png" alt="Google Photos Logo" class="logo">
             <span class="logo-text">Google Фото</span>
         </a>
 
-        <div class="filters" id="year-filters">
-            </div>
+        <div class="filters" id="year-filters"></div>
         
         <div class="menu-dropdown">
             <span class="material-icons menu-button" id="menu-button">menu</span>
-            <div class="menu-content" id="menu-content">
-                </div>
+            <div class="menu-content" id="menu-content"></div>
         </div>
 
         <div class="sort-dropdown">
@@ -582,8 +285,8 @@
 
         <div class="search-container" id="search-container">
             <span class="material-icons search-icon" id="search-icon-small">search</span>
-            <input type="text" id="search-input" class="search-input" placeholder="Поиск..." oninput="filterAlbums()">
-            <span class="material-icons clear-button" id="clear-search-button" style="display:none;">close</span>
+            <input type="text" id="search-input" class="search-input" placeholder="Поиск...">
+            <span class="material-icons clear-button" id="clear-search-button">close</span>
         </div>
 
         <span class="material-icons theme-button" id="theme-toggle">nightlight_round</span>
@@ -591,14 +294,11 @@
         <img src="https://lh3.googleusercontent.com/a/ACg8ocLU5rbDdy25qbia4Zv6ltz5hHFRWhP79PncRQ9CQ-cdm9nYRfxxmw=s96-c" alt="Profile Logo" class="profile-logo">
     </header>
 
-    <main class="album-grid" id="album-grid">
-        </main>
+    <main class="album-grid" id="album-grid"></main>
 
     <script>
-
         // *** МАССИВ АЛЬБОМОВ ***
         const albums = [
-
   { id: 1, title: '2025.10.18 - The Art of the Brick: LEGO', date: '2025-10-18', addedDate: '2025-10-18', url: 'https://photos.google.com/share/AF1QipOL07Gdf5WhqNH_u-U2EtRjbTKI1Xq80xNxmBLm5thlY2FqSjoaxs5Ftv28HyXP2w?key=Q1dzUzhTam9Va3V3dUJhcndaSllVUEdyTDNJd3V3', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczMuzdEDPTPi4RmHW8Qe9UVEo55ZquXneUYdPc5BA8dhbIzzYe-Vp5eqTpHgUwQAzysJe7Chm9v-BefIyQdY0HLzy1t5oB_A1NbnVNfzMWJmuyVCMmLT=w600-h315-p-k', year: '2025' },
   { id: 2, title: '2025.06-10 - Июль-октябрь', date: '2025-10-12', addedDate: '2025-10-12', url: 'https://photos.google.com/share/AF1QipONnpB9m8BMKVaN15lZT1HKWzWLlyJ_-yPpJx2Nx37hwpxlXHAJuUq_mTvbh18d6A?key=N09BQUc5d3BkX2tMS3Ztb19xX3E4Z0NmeGkyUzZB', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczOUU2ERZWT24-3OstV3ojOPxo9gb7AdhUcSnXkmx722phucU6KuBHRzKJkKS5IKLbaZmy9yrj2CiDm5IDG6tvTu_uLOwdg8VcCkrAPKQJQTugAhIkaL=w600-h315-p-k', year: '2025' },
   { id: 3, title: '2025.10.11 - Mont-Rigaud', date: '2025-10-11', addedDate: '2025-10-11', url: 'https://photos.google.com/share/AF1QipOq7D5o7TUKLYpvcNGdKbLDkdQTONQb7j2u6yBXOsqMll0QpLynaqd-aCqrQJAruQ?key=ckFjcHEyWXdMQ1Q3VXpKZE04enctcWxYbEJwNzlB', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczOc061P1RYpN6udUi86Gc8s4o1VtfXinRvSpUaiCeVey8ZMESATlVJXRLSH4IC-7IcRuuDAMA8Ty-pp-tRpvNTH33wwWSqE0GZwrsi6YSEKvvXL5jcY=w600-h315-p-k', year: '2025' },
@@ -650,452 +350,333 @@
   { id: 49, title: '2022.05.13-15 - Роудон, шале', date: '2022-05-15', addedDate: '2022-05-15', url: 'https://photos.google.com/share/AF1QipPLoBzzEh5St1ypACDvTWruYhZovAQQur3r7C8dhAxhWuphdm3GZEBzhhCRklhJOA?key=dW9wXzhCY2g2QUFvcDhXdllhd1g1X0pGMHNyajl3', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczPqfFD9DJRYyh3X8HP98mKqt2v3lKr44dn17djIgmrdwCsLYJvIqlOFrJ_HqN7G6MuuBEcaermDF68lfOLp-s6FxT2r_02OIc-1IBe1XdIIdQhdFr4L=w600-h315-p-k', year: '2022' },
   { id: 50, title: '2022.05.04 - Apocalyptica, Lacuna Coil', date: '2022-05-04', addedDate: '2022-05-04', url: 'https://photos.google.com/share/AF1QipNq_hMzl72g-VhWNvr1mPuvem3A8GMzgR-iYrUnvvnWPrC0WmW3sAKzjNFRCH6Rnw?key=eXZaV25FM05oWmFtMy00NWd1M3l4WkpDbHlmbktB', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczOlqJYnRsEjDepIAsq9iF3Qw71C8tlN1zjasp_SXTmLsGztUowipcmSga4sl2uIxXd97Qt4M8edvuSErMgH9D6Wbio9iYRwGN9WyXLlXxkw6ys158ce=w600-h315-p-k', year: '2022' },
   { id: 51, title: '2021.07.12-17 - Кемпинг Сандбанкс', date: '2021-07-17', addedDate: '2021-07-17', url: 'https://photos.google.com/share/AF1QipMkz3KmcEOgDYy2b2ufh_XjaIBXGzloS7JZjaT8Z7m4wVeHXbECX2wDjf9h5xNvPQ?key=aklpM2JnSkNLOXJzNzVsUUgtYThsem82VGMwOWx3', previewUrl: 'https://lh3.googleusercontent.com/pw/AP1GczPb6wecQ0jhOLPlmYbeyeCzyVaNleKqeIwqi1mJV-fb9kjDMT6PW1T8W7ynCh8f-PHRN8cwrtaotBA724QppQoyf5-n9Oxg8s0EwdqpaM909xF7ZWUR=w600-h315-p-k', year: '2021' }
-];
 
-// Проверка, является ли альбом недавно добавленным (последние 30 дней)
-function isRecentlyAdded(addedDateString) {
-    // Используем строку как есть (она должна быть в формате YYYY-MM-DD)
-    const normalizedDateString = addedDateString; 
-    
-    // Проверяем, что это полная дата (длина YYYY-MM-DD = 10 символов), 
-    // чтобы исключить диапазоны (например, '2025.01-06') или неполные даты.
-    if (normalizedDateString.length !== 10) {
-        return false;
-    }
-    
-    const addedDate = new Date(normalizedDateString);
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
-    // Проверяем, что addedDate является валидной датой (не Invalid Date)
-    // и что addedDate больше, чем sevenDaysAgo
-    return !isNaN(addedDate) && addedDate > sevenDaysAgo;
-}
-        
-        // *** Добавление констант для ключей localStorage ***
-        const SEARCH_STORAGE_KEY = 'searchTerm'; 
-        const YEAR_STORAGE_KEY = 'yearFilter'; 
-        const SORT_STORAGE_KEY = 'sortMode'; 
+        ];
 
-        // === Глобальные переменные ===
-        let currentYearFilter = 'all'; // Год, по которому фильтруем
-        let currentSort = 'newest'; // Режим сортировки
+        // Константы
+        const STORAGE_KEYS = {
+            SEARCH: 'searchTerm',
+            YEAR: 'yearFilter',
+            SORT: 'sortMode',
+            THEME: 'theme'
+        };
 
-        // === Получение элементов DOM ===
-        const filtersContainer = document.getElementById('year-filters');
-        const menuContent = document.getElementById('menu-content');
-        const menuButton = document.getElementById('menu-button');
-        const menuDropdown = document.querySelector('.menu-dropdown');
-        const sortButton = document.getElementById('sort-button');
-        const sortContent = document.getElementById('sort-content');
-        const sortLabel = document.getElementById('sort-label');
-        const sortIcon = document.getElementById('sort-icon');
-        const searchInput = document.getElementById('search-input');
-        const clearButton = document.getElementById('clear-search-button');
-        const themeToggle = document.getElementById('theme-toggle');
-        const searchContainer = document.getElementById('search-container');
+        // Состояние
+        let state = {
+            year: 'all',
+            sort: 'newest',
+            search: ''
+        };
 
+        // DOM Элементы
+        const UI = {
+            filtersContainer: document.getElementById('year-filters'),
+            menuContent: document.getElementById('menu-content'),
+            menuButton: document.getElementById('menu-button'),
+            menuDropdown: document.querySelector('.menu-dropdown'),
+            sortButton: document.getElementById('sort-button'),
+            sortContent: document.getElementById('sort-content'),
+            sortLabel: document.getElementById('sort-label'),
+            sortIcon: document.getElementById('sort-icon'),
+            searchInput: document.getElementById('search-input'),
+            clearButton: document.getElementById('clear-search-button'),
+            themeToggle: document.getElementById('theme-toggle'),
+            grid: document.getElementById('album-grid'),
+            searchContainer: document.getElementById('search-container')
+        };
 
-        // === Вспомогательные функции ===
+        // --- Вспомогательные функции ---
 
-        // Создание HTML-карточки альбома
+        function isRecentlyAdded(dateString) {
+            if (!dateString || dateString.length !== 10) return false;
+            const addedDate = new Date(dateString);
+            const limitDate = new Date();
+            limitDate.setDate(limitDate.getDate() - 30); // 30 дней считается "новым"
+            return !isNaN(addedDate) && addedDate > limitDate;
+        }
+
         function createAlbumCard(album) {
             const card = document.createElement('div');
             card.className = 'album-card';
             
-            const link = document.createElement('a');
-            link.href = album.url;
-            link.className = 'album-card-link';
-            const preview = document.createElement('div');
-            preview.className = 'album-preview';
-            preview.style.backgroundImage = `url('${album.previewUrl}')`;
+            const badgeHTML = isRecentlyAdded(album.addedDate) 
+                ? '<div class="new-badge"><span class="material-icons">notifications</span></div>' 
+                : '';
 
-	    // --- ДОБАВЛЕНИЕ ЗНАЧКА "НОВОЕ" ---
-            if (isRecentlyAdded(album.addedDate)) {
-                const newBadge = document.createElement('div');
-                newBadge.className = 'new-badge';
-                // Голубой колокольчик в темном/светлом кружке
-                newBadge.innerHTML = '<span class="material-icons">notifications</span>'; 
-                preview.appendChild(newBadge);
-            }
-            // ---------------------------------
-
-            const info = document.createElement('div');
-            info.className = 'album-info';
-
-            const title = document.createElement('div');
-            title.className = 'album-title';
-            title.textContent = album.title;
-
-            info.appendChild(title);
-            link.appendChild(preview);
-            link.appendChild(info);
-            card.appendChild(link);
-
+            card.innerHTML = `
+                <a href="${album.url}" class="album-card-link" target="_self">
+                    <div class="album-preview" style="background-image: url('${album.previewUrl}')">
+                        ${badgeHTML}
+                    </div>
+                    <div class="album-info">
+                        <div class="album-title"></div>
+                    </div>
+                </a>
+            `;
+            // Безопасная вставка текста
+            card.querySelector('.album-title').textContent = album.title;
             return card;
         }
 
-        // Обновление иконки и текста на кнопке сортировки
-        function updateSortButton(sortMode) {
-            const sortIconsMap = {
-                newest: { icon: 'arrow_downward', label: 'Самые новые' },
-                oldest: { icon: 'arrow_upward', label: 'Самые старые' },
-                added: { icon: 'notifications', label: 'Недавно добавленные' }
-            };
-            const mode = sortIconsMap[sortMode] || sortIconsMap.newest;
-            
-            sortIcon.textContent = mode.icon;
-            sortLabel.textContent = mode.label;
-        }
+        function getSortedAlbums() {
+            let sorted = [...albums];
+            const compareDates = (a, b) => new Date(a).getTime() - new Date(b).getTime();
 
-        // Логика сортировки
-        function sortAlbums(albumList, sortMode) {
-            const sorted = [...albumList];
-            switch (sortMode) {
-                case 'newest':
-                    // Самые новые (по дате альбома: descend)
-                    sorted.sort((a, b) => b.date.localeCompare(a.date));
-                    break;
-                case 'oldest':
-                    // Самые старые (по дате альбома: ascend)
-                    sorted.sort((a, b) => a.date.localeCompare(b.date));
-                    break;
-                case 'added':
-                    // Недавно добавленные (по дате добавления: descend)
-                    sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate));
-                    break;
-                default:
-                    // Самые новые (по дате альбома: descend)
-                    sorted.sort((a, b) => b.date.localeCompare(a.date));
-                    break;
+            switch (state.sort) {
+                case 'newest': sorted.sort((a, b) => b.date.localeCompare(a.date)); break;
+                case 'oldest': sorted.sort((a, b) => a.date.localeCompare(b.date)); break;
+                case 'added': sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate)); break;
             }
             return sorted;
         }
 
-        // === Функция Отрисовки Альбомов ===
-        // Удаление параметра searchTerm и чтение из searchInput.value ***
-        function renderAlbums(filterYear = currentYearFilter) {
-            const searchTerm = searchInput.value; // Получаем поисковый запрос из поля ввода
-            const grid = document.getElementById('album-grid');
-            grid.innerHTML = '';
-            
-            let filteredAlbums = sortAlbums(albums, currentSort); 
+        function renderAlbums() {
+            UI.grid.innerHTML = '';
+            let result = getSortedAlbums();
 
-            if (filterYear !== 'all') {
-                filteredAlbums = filteredAlbums.filter(album => album.year === filterYear);
-            }
-            
-            // Фильтруем по поисковому запросу из поля ввода
-            if (searchTerm) {
-                const query = searchTerm.toLowerCase();
-                filteredAlbums = filteredAlbums.filter(album => album.title.toLowerCase().includes(query) );
+            // Фильтр по году
+            if (state.year !== 'all') {
+                result = result.filter(a => a.year === state.year);
             }
 
-            if (filteredAlbums.length > 0) {
-                filteredAlbums.forEach(album => {
-                    grid.appendChild(createAlbumCard(album));
+            // Фильтр по поиску
+            if (state.search) {
+                const query = state.search.toLowerCase();
+                result = result.filter(a => a.title.toLowerCase().includes(query));
+            }
+
+            if (result.length > 0) {
+                result.forEach(album => UI.grid.appendChild(createAlbumCard(album)));
+            } else {
+                UI.grid.innerHTML = `<p style="text-align: center; width: 100%; color: var(--color-text); padding: 20px;">Нет альбомов.</p>`;
+            }
+            updateActiveClasses();
+        }
+
+        function updateActiveClasses() {
+            // Фильтры
+            document.querySelectorAll('.filter-link, .menu-content-item').forEach(el => {
+                el.classList.toggle('active', el.getAttribute('data-year') === state.year);
+            });
+            // Сортировка
+            document.querySelectorAll('.sort-content-item').forEach(el => {
+                el.classList.toggle('active', el.getAttribute('data-sort') === state.sort);
+            });
+        }
+
+        function updateSortButtonUI() {
+            const map = {
+                newest: { icon: 'arrow_downward', label: 'Самые новые' },
+                oldest: { icon: 'arrow_upward', label: 'Самые старые' },
+                added: { icon: 'notifications', label: 'Недавно добавленные' }
+            };
+            const current = map[state.sort] || map.newest;
+            UI.sortIcon.textContent = current.icon;
+            UI.sortLabel.textContent = current.label;
+        }
+
+        // --- Debounce для поиска ---
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        const handleSearchInput = debounce((e) => {
+            state.search = e.target.value.trim();
+            localStorage.setItem(STORAGE_KEYS.SEARCH, state.search);
+            UI.clearButton.style.display = state.search ? 'block' : 'none';
+            renderAlbums();
+        }, 300);
+
+        // --- Инициализация Фильтров ---
+        function initYearFilters() {
+            const years = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008']; // Добавьте свои годы
+            UI.filtersContainer.innerHTML = '';
+
+            const createLink = (text, val, isMenu) => {
+                const el = document.createElement('a');
+                el.className = isMenu ? 'menu-content-item' : 'filter-link';
+                el.textContent = text;
+                el.setAttribute('data-year', val);
+                if (state.year === val) el.classList.add('active');
+                
+                el.onclick = (e) => {
+                    e.stopPropagation();
+                    state.year = val;
+                    localStorage.setItem(STORAGE_KEYS.YEAR, val);
+                    renderAlbums();
+                    UI.menuContent.classList.remove('show');
+                };
+                return el;
+            };
+
+            // Сначала рендерим ВСЕ фильтры в шапку
+            UI.filtersContainer.appendChild(createLink('Все', 'all', false));
+            years.forEach(y => UI.filtersContainer.appendChild(createLink(y, y, false)));
+
+            // Функция пересчета видимости (Reset -> Measure -> Distribute)
+            function updateFiltersVisibility() {
+                // 1. Сброс: Скрываем меню, чтобы узнать реальную полную ширину
+                UI.menuDropdown.style.display = 'none';
+                const allElements = Array.from(UI.filtersContainer.children);
+                
+                // Показываем все элементы временно, чтобы offsetWidth был корректен
+                allElements.forEach(el => el.style.display = 'inline-flex');
+
+                // 2. Замер доступного места
+                const containerWidth = UI.filtersContainer.offsetWidth;
+                const itemWidth = 64; // 56px + 8px margin
+                const menuBtnWidth = 48; // 40px + 8px margin
+
+                const totalNeeded = allElements.length * itemWidth;
+
+                // 3. Распределение
+                UI.menuContent.innerHTML = '';
+                
+                // Если всё влезает без меню
+                if (totalNeeded <= containerWidth) {
+                    return; 
+                }
+
+                // Если не влезает, вычитаем место под кнопку
+                const usableWidth = containerWidth - menuBtnWidth;
+                let usedWidth = 0;
+                let hasHidden = false;
+
+                allElements.forEach(el => {
+                    if (usedWidth + itemWidth <= usableWidth) {
+                        el.style.display = 'inline-flex';
+                        usedWidth += itemWidth;
+                    } else {
+                        el.style.display = 'none';
+                        hasHidden = true;
+                        // Клонируем логику в меню
+                        UI.menuContent.appendChild(createLink(el.textContent, el.getAttribute('data-year'), true));
+                    }
                 });
-            } else {
-                grid.innerHTML = `<p style="text-align: center; width: 100%; color: var(--color-text);">Нет альбомов, соответствующих вашему запросу.</p>`;
+
+                if (hasHidden) {
+                    UI.menuDropdown.style.display = 'block';
+                }
             }
 
-            // Обновление активного класса на фильтрах в шапке
-            document.querySelectorAll('.filter-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('data-year') === filterYear) {
-                    link.classList.add('active');
-                }
-            });
-
-            // Обновление активного класса на фильтрах в меню
-            document.querySelectorAll('.menu-content-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-year') === filterYear) {
-                    item.classList.add('active');
-                }
-            });
-
-            // Обновление активного класса в меню сортировки
-            document.querySelectorAll('.sort-content-item').forEach(item => {
-                item.classList.remove('active');
-                if (item.getAttribute('data-sort') === currentSort) {
-                    item.classList.add('active');
-                }
-            });
-        } 
-        
-        // === Фильтрация по Поиску ===
-        // Использование SEARCH_STORAGE_KEY и вызов renderAlbums без searchTerm ***
-        function filterAlbums() {
-            const searchTerm = searchInput.value;
-            localStorage.setItem(SEARCH_STORAGE_KEY, searchTerm);
-            if (searchTerm.length > 0) {
-                clearButton.style.display = 'block';
-            } else {
-                clearButton.style.display = 'none';
-            }
-            renderAlbums(currentYearFilter); 
-        }
-// === Инициализация Фильтров Годов (Адаптивное скрытие) ===
-    function initYearFilters() {
-        const years = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011', '2010', '2009', '2008'];
-
-        // Создает элемент фильтра
-        const createFilterLink = (text, year, isMenu = false) => {
-            const link = document.createElement('a');
-            // Если в меню - класс пункта меню, если в шапке - класс фильтра
-            link.className = isMenu ? 'menu-content-item' : 'filter-link';
-            link.textContent = text;
-            link.setAttribute('data-year', year);
+            // Слушатели resize
+            const debouncedResize = debounce(updateFiltersVisibility, 50);
+            window.addEventListener('resize', debouncedResize);
+            window.addEventListener('orientationchange', () => setTimeout(updateFiltersVisibility, 300));
             
-            // Если создаем для меню и этот год сейчас активен - добавляем active
-            if (isMenu && currentYearFilter === year) {
-                link.classList.add('active');
-            }
+            // Первый запуск
+            requestAnimationFrame(updateFiltersVisibility);
+        }
 
-            link.onclick = (e) => {
+        // --- Инициализация ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Загрузка из Storage
+            state.year = localStorage.getItem(STORAGE_KEYS.YEAR) || 'all';
+            state.sort = localStorage.getItem(STORAGE_KEYS.SORT) || 'newest';
+            state.search = localStorage.getItem(STORAGE_KEYS.SEARCH) || '';
+
+            // UI Setup
+            UI.searchInput.value = state.search;
+            if(state.search) UI.clearButton.style.display = 'block';
+            
+            updateSortButtonUI();
+            initYearFilters();
+            renderAlbums();
+
+            // Event Listeners
+            UI.searchInput.addEventListener('input', handleSearchInput);
+            
+            UI.clearButton.onclick = (e) => {
                 e.stopPropagation();
-                currentYearFilter = year;
-                localStorage.setItem(YEAR_STORAGE_KEY, year);
+                state.search = '';
+                UI.searchInput.value = '';
+                localStorage.removeItem(STORAGE_KEYS.SEARCH);
+                UI.clearButton.style.display = 'none';
                 renderAlbums();
-                menuContent.classList.remove('show');
+                UI.searchInput.focus();
             };
-            return link;
-        };
 
-        // Очистка и первичное заполнение контейнера
-        filtersContainer.innerHTML = '';
-        
-        // 1. Добавляем "Все"
-        const allAlbumsLink = createFilterLink('Все', 'all');
-        if (currentYearFilter === 'all') allAlbumsLink.classList.add('active');
-        filtersContainer.appendChild(allAlbumsLink);
-
-        // 2. Добавляем годы
-        years.forEach(year => {
-            const yearLink = createFilterLink(year, year);
-            if (currentYearFilter === year) yearLink.classList.add('active');
-            filtersContainer.appendChild(yearLink);
-        });
-
-// Логика адаптивного скрытия
-        function updateFiltersVisibility() {
-            // 1. СБРОС СОСТОЯНИЯ
-            // Сначала СКРЫВАЕМ кнопку меню. Это заставляет контейнер .filters
-            // расшириться на всю доступную ширину. Теперь у нас есть "Эталонная ширина".
-            // Это устраняет разницу между "обновили страницу" и "уменьшили окно".
-            menuDropdown.style.display = 'none';
-
-            // 2. ЗАМЕР
-            // offsetWidth вызывает принудительный пересчет макета (Reflow).
-            // Мы получаем точную ширину, доступную для фильтров, если бы кнопки меню не существовало.
-            const fullAvailableWidth = filtersContainer.offsetWidth;
-
-            // 3. КОНСТАНТЫ
-            // Ширина кнопки года (56px) + отступ (8px) = 64px
-            const itemFullWidth = 64; 
-            // Ширина кнопки меню (40px) + её отступ (8px) = 48px
-            const menuButtonWidth = 48; 
-
-            const allFilterElements = Array.from(filtersContainer.children);
-            const totalItems = allFilterElements.length;
-            
-            // Очищаем меню перед распределением
-            menuContent.innerHTML = ''; 
-
-            // 4. ПРОВЕРКА: Влезают ли ВСЕ годы в "Эталонную ширину" БЕЗ кнопки меню?
-            const totalWidthNeeded = totalItems * itemFullWidth;
-
-            if (totalWidthNeeded <= fullAvailableWidth) {
-                // Сценарий А: Всё помещается. 
-                // Кнопку меню мы уже скрыли в шаге 1, просто показываем все годы.
-                allFilterElements.forEach(el => el.style.display = 'inline-flex');
-                return; // Выходим, всё готово.
-            }
-
-            // 5. РАСЧЕТ С УЧЕТОМ МЕНЮ
-            // Если мы здесь, значит всё не влезло. Нам ОБЯЗАТЕЛЬНО нужна кнопка меню.
-            // Вычисляем "Рабочую зону": Эталонная ширина минус место под кнопку меню.
-            const usableWidth = fullAvailableWidth - menuButtonWidth;
-
-            let currentUsedWidth = 0;
-            let hasHiddenItems = false;
-
-            allFilterElements.forEach(el => {
-                const text = el.textContent;
-                const yearVal = el.getAttribute('data-year');
-
-                // Строгая проверка: влезает ли текущий элемент в Рабочую зону?
-                // Убраны все лишние "запасы", используется чистая математика.
-                if (currentUsedWidth + itemFullWidth <= usableWidth) {
-                    // Влезает -> Оставляем в шапке
-                    el.style.display = 'inline-flex';
-                    currentUsedWidth += itemFullWidth;
-                } else {
-                    // Не влезает -> В меню
-                    el.style.display = 'none';
-                    hasHiddenItems = true;
-
-                    // Создаем пункт меню
-                    const menuLink = createFilterLink(text, yearVal, true);
-                    menuContent.appendChild(menuLink);
-                }
-            });
-
-            // 6. ФИНАЛ
-            // Раз есть скрытые элементы, включаем кнопку меню
-            if (hasHiddenItems) {
-                menuDropdown.style.display = 'block';
-            }
-        }
-
-        // Debounce для оптимизации resize
-        function debounce(func, timeout = 25) {
-            let timer;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = setTimeout(() => { func.apply(this, args); }, timeout);
-            };
-        }
-
-        const debouncedUpdate = debounce(updateFiltersVisibility);
-        window.addEventListener('resize', debouncedUpdate);
-
-	// === ИСПРАВЛЕНИЕ: Принудительный пересчет после поворота экрана ===
-	window.addEventListener('orientationchange', () => {
-	    // Ждем 300мс, пока закончится анимация поворота интерфейса телефона
-	    setTimeout(() => {
-	        updateFiltersVisibility();
-	    }, 300);
-	});
-
-        // Гамбургер-Меню
-        menuButton.onclick = (e) => {
-            e.stopPropagation();
-            menuContent.classList.toggle('show');
-            sortContent.classList.remove('show');
-        };
-
-        // Первичный запуск расчета видимости
-        requestAnimationFrame(() => {
-            updateFiltersVisibility();
-        });
-    }
-        // === Инициализация Сортировки (Адаптивная кнопка) ===
-        function initSortDropdown() {
-            // Показать/скрыть меню сортировки
-            sortButton.onclick = (e) => {
+            UI.menuButton.onclick = (e) => {
                 e.stopPropagation();
-                sortContent.classList.toggle('show');
-                menuContent.classList.remove('show'); // Закрыть гамбургер-меню
+                UI.menuContent.classList.toggle('show');
+                UI.sortContent.classList.remove('show');
             };
 
-            // Обработка выбора режима сортировки
+            UI.sortButton.onclick = (e) => {
+                e.stopPropagation();
+                UI.sortContent.classList.toggle('show');
+                UI.menuContent.classList.remove('show');
+            };
+
             document.querySelectorAll('.sort-content-item').forEach(item => {
                 item.onclick = (e) => {
                     e.stopPropagation();
-                    const newSort = item.getAttribute('data-sort');
-                    if (newSort !== currentSort) {
-                        currentSort = newSort;
-                        // *** ИЗМЕНЕНИЕ 5: Использование SORT_STORAGE_KEY ***
-                        localStorage.setItem(SORT_STORAGE_KEY, newSort); 
-                        updateSortButton(newSort);
-                        renderAlbums(); // Перерисовка с новым порядком
-                    }
-                    sortContent.classList.remove('show');
+                    state.sort = item.getAttribute('data-sort');
+                    localStorage.setItem(STORAGE_KEYS.SORT, state.sort);
+                    updateSortButtonUI();
+                    renderAlbums();
+                    UI.sortContent.classList.remove('show');
                 };
             });
-            
-            // updateSortButton(currentSort); // Вызывается после загрузки
-        }
-        
-        // === Инициализация темы ===
-        function initThemeToggle() {
-            const body = document.body;
-            const toggleIcon = themeToggle;
-            
-            const updateIcon = (isDark) => {
-                toggleIcon.textContent = isDark ? 'light_mode' : 'nightlight_round';
-            };
 
-            // Загрузка сохраненной темы
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                body.classList.add('dark-theme');
-                updateIcon(true);
-            } else {
-                body.classList.remove('dark-theme');
-                updateIcon(false);
-            }
+	    // === Theme Toggle (С автоматическим переключением) ===
 
-            themeToggle.onclick = () => {
-                if (body.classList.contains('dark-theme')) {
-                    body.classList.remove('dark-theme');
-                    updateIcon(false);
-                    localStorage.setItem('theme', 'light');
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+            // Функция, которая просто применяет тему (чтобы не дублировать код)
+            function applyTheme(isDark) {
+                if (isDark) {
+                    document.body.classList.add('dark-theme');
+                    UI.themeToggle.textContent = 'light_mode'; 
                 } else {
-                    body.classList.add('dark-theme');
-                    updateIcon(true);
-                    localStorage.setItem('theme', 'dark');
-                }
-            };
-        }
-
-        // === Глобальные обработчики ===
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // *** Загрузка состояния из localStorage до инициализации фильтров ***
-            const savedYear = localStorage.getItem(YEAR_STORAGE_KEY);
-            const savedSort = localStorage.getItem(SORT_STORAGE_KEY);
-            const savedSearchTerm = localStorage.getItem(SEARCH_STORAGE_KEY);
-            
-            // Применение сохраненных значений
-            if (savedYear) {
-                currentYearFilter = savedYear;
-            }
-            if (savedSort) {
-                currentSort = savedSort;
-            }
-            if (savedSearchTerm) {
-                searchInput.value = savedSearchTerm;
-                // Показать кнопку очистки, если есть сохраненный запрос
-                if (savedSearchTerm.length > 0) {
-                    clearButton.style.display = 'block';
+                    document.body.classList.remove('dark-theme');
+                    UI.themeToggle.textContent = 'nightlight_round';
                 }
             }
-            
-            initThemeToggle();
-            // Обновляем кнопку сортировки с учетом загруженного режима
-            updateSortButton(currentSort); 
-            initYearFilters();
-            initSortDropdown();
 
-            // Сворачивание меню при клике в другом месте
-            window.addEventListener('click', () => {
-                menuContent.classList.remove('show');
-                sortContent.classList.remove('show');
+            // 1. Инициализация при загрузке
+            const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME);
+            
+            if (savedTheme) {
+                // Если пользователь уже выбирал тему вручную — уважаем его выбор
+                applyTheme(savedTheme === 'dark');
+            } else {
+                // Если нет — ставим как в системе сейчас
+                applyTheme(mediaQuery.matches);
+            }
+
+            // 2. СЛУШАТЕЛЬ СИСТЕМНЫХ ИЗМЕНЕНИЙ (Самое важное для вас)
+            // Сработает, если вы поменяете тему в настройках телефона, не перезагружая страницу
+            mediaQuery.addEventListener('change', (e) => {
+                // Меняем тему автоматически, ТОЛЬКО если пользователь НЕ переопределил её вручную
+                if (!localStorage.getItem(STORAGE_KEYS.THEME)) {
+                    applyTheme(e.matches);
+                }
             });
-            menuContent.addEventListener('click', e => e.stopPropagation());
-            sortContent.addEventListener('click', e => e.stopPropagation());
-            
-            // Клик на контейнере поиска фокусирует на поле ввода
-            searchContainer.onclick = (e) => {
-                e.stopPropagation();
-                searchInput.focus();
+
+            // 3. Ручное переключение по кнопке
+            UI.themeToggle.onclick = () => {
+                // Смотрим, какая тема сейчас, и меняем на противоположную
+                const isCurrentDark = document.body.classList.contains('dark-theme');
+                const newThemeIsDark = !isCurrentDark;
+                
+                applyTheme(newThemeIsDark);
+                
+                // ЗАПОМИНАЕМ выбор. С этого момента автоматика (пункт 2) перестанет работать,
+                // пока пользователь не очистит кэш. Это стандартное поведение.
+                localStorage.setItem(STORAGE_KEYS.THEME, newThemeIsDark ? 'dark' : 'light');
             };
 
-            // Обработчик кнопки очистки
-            clearButton.onclick = (e) => {
-                e.stopPropagation();
-                searchInput.value = '';
-                filterAlbums(); 
-                searchInput.focus(); 
-            };
-            
-            // Инициализация при загрузке: Render
-            renderAlbums(currentYearFilter); // Вызываем renderAlbums с загруженным годом и поиском из input
+            // Close menus on outside click
+            window.addEventListener('click', () => {
+                UI.menuContent.classList.remove('show');
+                UI.sortContent.classList.remove('show');
+            });
         });
-
     </script>
 </body>
 </html>
