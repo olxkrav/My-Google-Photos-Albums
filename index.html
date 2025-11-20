@@ -71,7 +71,7 @@
             --color-link-active-highlight: var(--color-link-active-highlight-light);
             --color-badge: var(--color-badge-light);
             --color-scrollbar: var(--color-scrollbar-thumb-light);
-            --color-scrollbar-hover: var(--color-scrollbar-thumb-hover-light);
+            --color-scrollbar-hover: var(--color-scrollbar-thumb-hover-hover-light);
         }
 
         /* === Общие Стили === */
@@ -133,6 +133,12 @@
         .filter-link:hover { background-color: var(--color-surface); }
         .filter-link.active { color: var(--color-link-active); background-color: var(--color-link-active-highlight); }
         
+        /* === NEW: Стиль для фокуса клавиатуры (мимикрирует :hover) === */
+        .filter-link.keyboard-focus { background-color: var(--color-surface); }
+        /* При этом active link сохраняет свой цвет */
+        .filter-link.active.keyboard-focus { background-color: var(--color-link-active-highlight); } 
+        /* ============================================================= */
+
         /* --- Меню и Дропдауны --- */
         .menu-content, .sort-content {
             display: none; position: absolute; top: 48px;
@@ -202,6 +208,12 @@
             background-color: var(--color-link-active-highlight);
         }
         
+        /* === NEW: Стиль для фокуса клавиатуры в меню === */
+        .menu-content-item.keyboard-focus { background-color: var(--color-surface); }
+        /* Fix: active item with keyboard focus should keep its active color */
+        .menu-content-item.active.keyboard-focus { background-color: var(--color-link-active-highlight); } 
+        /* ============================================== */
+
         .menu-dropdown { position: relative; display: none; margin-right: var(--header-item-spacing); flex-shrink: 0; }
         .menu-button {
             width: 40px; height: 40px; padding: 0;
@@ -209,6 +221,10 @@
             border-radius: 50%; cursor: pointer; transition: background-color 0.2s; color: var(--color-text); 
         }
         .menu-button:hover { background-color: var(--color-surface); }
+        
+        /* === NEW: Стиль для фокуса клавиатуры на кнопке меню === */
+        .menu-button.keyboard-focus { background-color: var(--color-surface); }
+        /* ======================================================= */
 
         /* --- Сортировка --- */
         .sort-dropdown { margin-right: 12px; position: relative; flex-shrink: 0; }
@@ -392,7 +408,7 @@
         <div class="filters" id="year-filters"></div>
         
         <div class="menu-dropdown">
-            <span class="material-icons menu-button" id="menu-button">menu</span>
+            <span class="material-icons menu-button" id="menu-button" data-year="menu-button">menu</span>
             <div class="menu-content" id="menu-content"></div>
         </div>
 
@@ -560,6 +576,82 @@
             search: ''
         };
 
+        // --- NEW: СОСТОЯНИЕ И ЛОГИКА НАВИГАЦИИ ПО ФИЛЬТРАМ ГОДОВ ---
+        const KEY_DELAY = 300; // Начальная задержка перед повтором (мс)
+        const KEY_INTERVAL = 100; // Интервал непрерывного повтора (мс)
+        
+        const navigation = {
+            navigableFilters: [], // Все элементы: видимые фильтры, кнопка меню, элементы меню
+            focusedIndex: -1,
+            isNavigating: false,
+            focusedElement: null,
+            keyRepeatTimeout: null,
+            keyRepeatInterval: null, // NEW: для управления повторами клавиш
+        };
+
+        function clearFocus() {
+            if (navigation.focusedElement) {
+                navigation.focusedElement.classList.remove('keyboard-focus');
+            }
+            navigation.focusedIndex = -1;
+            navigation.focusedElement = null;
+            // Убедимся, что меню годов закрыто при сбросе фокуса навигации
+            UI.menuContent.classList.remove('show'); 
+        }
+
+        function focusElement(index) {
+            clearFocus();
+
+            if (index < 0 || index >= navigation.navigableFilters.length) {
+                // Если индекс выходит за пределы, просто сбрасываем фокус
+                return;
+            }
+
+            navigation.focusedIndex = index;
+            navigation.focusedElement = navigation.navigableFilters[index];
+            const focusedEl = navigation.focusedElement;
+
+            focusedEl.classList.add('keyboard-focus');
+
+            // Прокручиваем элемент в видимую область (актуально для горизонтального скролла фильтров и вертикального скролла меню)
+            if (focusedEl.classList.contains('filter-link')) {
+                focusedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+            } else if (focusedEl.classList.contains('menu-content-item')) {
+                // Открываем меню, если фокус на его элементе
+                UI.menuContent.classList.add('show');
+                focusedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+        
+        // NEW: Helper function to clear key repeat state
+        function clearKeyRepeat() {
+            clearTimeout(navigation.keyRepeatTimeout);
+            clearInterval(navigation.keyRepeatInterval);
+            navigation.keyRepeatTimeout = null;
+            navigation.keyRepeatInterval = null;
+        }
+
+        // NEW: Helper function to move focus
+        function moveFocus(direction) {
+            const len = navigation.navigableFilters.length;
+            let newIndex = navigation.focusedIndex;
+
+            if (direction === 'next') {
+                newIndex = (newIndex + 1) % len;
+            } else if (direction === 'prev') {
+                newIndex = (newIndex - 1 + len) % len;
+            } else if (direction === 'first') {
+                newIndex = 0;
+            } else if (direction === 'last') {
+                newIndex = len - 1;
+            }
+
+            if (newIndex !== navigation.focusedIndex && newIndex !== -1) {
+                focusElement(newIndex);
+            }
+        }
+        // --- END NEW: NAVIGATION LOGIC ---
+
         // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
         function isRecentlyAdded(addedDateStr) {
             const oneWeekAgo = new Date();
@@ -595,16 +687,13 @@
             let sorted = [...albums];
             const compareDates = (a, b) => new Date(a).getTime() - new Date(b).getTime();
             
-            switch (state.sort) {
-                case 'newest':
-                    sorted.sort((a, b) => b.date.localeCompare(a.date));
-                    break;
-                case 'oldest':
-                    sorted.sort((a, b) => a.date.localeCompare(b.date));
-                    break;
-                case 'added':
-                    sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate));
-                    break;
+            // ВАЖНОЕ ПРАВИЛО: Всегда сортируй карточки от новых альбомов к старым, если не выбран другой критерий
+            if (state.sort === 'newest') {
+                sorted.sort((a, b) => b.date.localeCompare(a.date));
+            } else if (state.sort === 'oldest') {
+                sorted.sort((a, b) => a.date.localeCompare(b.date));
+            } else if (state.sort === 'added') {
+                sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate));
             }
             return sorted;
         }
@@ -675,14 +764,32 @@
         // --- Инициализация Фильтров ---
         function initYearFilters() {
             const years = [...new Set(albums.map(a => a.year))].sort((a, b) => b - a);
-
+            
             const createLink = (text, year, isMenuItem) => {
                 const el = document.createElement(isMenuItem ? 'div' : 'a');
                 el.className = isMenuItem ? 'menu-content-item' : 'filter-link';
                 el.setAttribute('data-year', year);
                 el.textContent = text;
+                
                 el.onclick = (e) => {
                     e.stopPropagation();
+                    
+                    // --- NEW: Start navigation on click and set focus ---
+                    const clickedIndex = navigation.navigableFilters.findIndex(item => item === el);
+                    if (clickedIndex !== -1) {
+                        navigation.isNavigating = true;
+                        focusElement(clickedIndex);
+                        // Если кликнули в меню, то оно закрывается, но фокус остается
+                        if (el.classList.contains('menu-content-item')) {
+                            UI.menuContent.classList.remove('show');
+                        }
+                    } else {
+                         // Fallback for logic where element is not yet in array (e.g. resize race condition)
+                         clearFocus();
+                         navigation.isNavigating = false;
+                    }
+                    // --- END NEW ---
+
                     state.year = year;
                     localStorage.setItem(STORAGE_KEYS.YEAR, year);
                     renderAlbums();
@@ -703,30 +810,67 @@
                 const menuBtnWidth = 48; 
                 const totalNeeded = allElements.length * itemWidth;
 
+                // --- NAVIGATION LOGIC: Save focus state before DOM recreation ---
+                const previouslyFocusedData = navigation.focusedElement 
+                    ? navigation.focusedElement.getAttribute('data-year') || 'menu-button' 
+                    : null;
+                clearFocus(); // Clear focus before re-rendering menu items
+                
+                // NEW: Также очищаем таймеры повтора
+                clearKeyRepeat(); 
+                // --- END NAVIGATION LOGIC ---
+                
                 UI.menuContent.innerHTML = '';
 
-                if (totalNeeded <= containerWidth) {
-                    return;
-                }
-
-                const usableWidth = containerWidth - menuBtnWidth;
-                let usedWidth = 0;
                 let hasHidden = false;
 
-                allElements.forEach(el => {
-                    if (usedWidth + itemWidth <= usableWidth) {
-                        el.style.display = 'inline-flex';
-                        usedWidth += itemWidth;
-                    } else {
-                        el.style.display = 'none';
-                        hasHidden = true;
-                        UI.menuContent.appendChild(createLink(el.textContent, el.getAttribute('data-year'), true));
-                    }
-                });
-
+                if (totalNeeded > containerWidth) {
+                    const usableWidth = containerWidth - menuBtnWidth;
+                    let usedWidth = 0;
+                    
+                    allElements.forEach(el => {
+                        if (usedWidth + itemWidth <= usableWidth) {
+                            el.style.display = 'inline-flex';
+                            usedWidth += itemWidth;
+                        } else {
+                            el.style.display = 'none';
+                            hasHidden = true;
+                            UI.menuContent.appendChild(createLink(el.textContent, el.getAttribute('data-year'), true));
+                        }
+                    });
+                }
+                
                 if (hasHidden) {
                     UI.menuDropdown.style.display = 'block';
                 }
+
+                // --- NAVIGATION LOGIC: Rebuild array and re-establish focus ---
+                navigation.navigableFilters = Array.from(UI.filtersContainer.children).filter(el => el.style.display !== 'none');
+                
+                if (hasHidden) {
+                    navigation.navigableFilters.push(UI.menuButton); 
+                    navigation.navigableFilters.push(...Array.from(UI.menuContent.children)); 
+                }
+                
+                if (navigation.isNavigating && previouslyFocusedData) {
+                    let newIndex = navigation.navigableFilters.findIndex(el => {
+                        if(el === UI.menuButton) return previouslyFocusedData === 'menu-button';
+                        return el.getAttribute('data-year') === previouslyFocusedData;
+                    });
+                    
+                    if (newIndex !== -1) {
+                        focusElement(newIndex);
+                    } else {
+                        // Если элемент, который был в фокусе, пропал (например, при сильном сжатии)
+                        navigation.isNavigating = false;
+                        clearFocus();
+                    }
+                } else {
+                    // Если не в режиме навигации, сбрасываем состояние
+                    navigation.isNavigating = false;
+                    clearFocus();
+                }
+                // --- END NAVIGATION LOGIC ---
             }
 
             const debouncedResize = debounce(updateFiltersVisibility, 50);
@@ -736,7 +880,7 @@
             requestAnimationFrame(updateFiltersVisibility);
         }
 
-        // --- SCROLLBAR LOGIC (ПОЛНОСТЬЮ ПЕРЕПИСАНО) ---
+        // --- SCROLLBAR LOGIC (ДОБАВЛЕНА ЛОГИКА НАВИГАЦИИ КЛАВИАТУРОЙ) ---
         function initScrollLogic() {
             let scrollTimeout;
             const scrollContainer = UI.grid;
@@ -766,8 +910,7 @@
             UI.header.addEventListener('wheel', (e) => {
                 // Если открыто меню годов или сортировки, блокируем прокрутку основного контейнера.
                 if (UI.menuContent.classList.contains('show') || UI.sortContent.classList.contains('show')) {
-                    // Прокрутка самого меню (menu-content/sort-content) будет обрабатываться браузером,
-                    // так как слушатель является "passive". Мы просто не прокручиваем альбомный грид.
+                    // Прокрутка самого меню (menu-content/sort-content) будет обрабатываться браузером
                     return; 
                 }
 
@@ -775,55 +918,132 @@
                 showScroll();
             }, { passive: true });
 
-            // 4. ГЛОБАЛЬНЫЙ ПЕРЕХВАТ КЛАВИШ (Исправлено)
-            // Мы слушаем window и вручную крутим контейнер, если фокус не в поиске
+            // 4. ГЛОБАЛЬНЫЙ ПЕРЕХВАТ КЛАВИШ (ЛОГИКА НАВИГАЦИИ и СКРОЛЛИНГА)
             window.addEventListener('keydown', (e) => {
                 // Если фокус сейчас в поле поиска - ничего не трогаем, пусть печатает
-                if (document.activeElement === UI.searchInput) return;
+                if (document.activeElement === UI.searchInput) {
+                    clearKeyRepeat(); 
+                    return; 
+                }
 
-                const scrollAmount = 50; // Шаг прокрутки стрелками
-                const pageAmount = scrollContainer.clientHeight * 0.9; // Шаг PageUp/Down
-                let handled = false;
+                const isNavKey = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'PageUp', 'Home', 'PageDown', 'End'].includes(e.key);
+                let actionHandled = false;
 
-                switch (e.key) {
-                    case 'ArrowDown':
-                        scrollContainer.scrollTop += scrollAmount;
-                        handled = true;
-                        break;
-                    case 'ArrowUp':
-                        scrollContainer.scrollTop -= scrollAmount;
-                        handled = true;
-                        break;
-                    case 'PageDown':
-                        scrollContainer.scrollTop += pageAmount;
-                        handled = true;
-                        break;
-                    case 'PageUp':
-                        scrollContainer.scrollTop -= pageAmount;
-                        handled = true;
-                        break;
-                    case 'Home':
-                        scrollContainer.scrollTop = 0;
-                        handled = true;
-                        break;
-                    case 'End':
-                        scrollContainer.scrollTop = scrollContainer.scrollHeight;
-                        handled = true;
-                        break;
-                    case ' ': // Пробел (тоже крутит страницу)
-                        if (e.shiftKey) {
-                            scrollContainer.scrollTop -= pageAmount;
-                        } else {
-                            scrollContainer.scrollTop += pageAmount;
+                // --- ЛОГИКА НАВИГАЦИИ ПО ФИЛЬТРАМ ---
+                if (navigation.isNavigating) {
+                    
+                    if (e.key === 'Escape') { 
+                        e.preventDefault();
+                        UI.menuContent.classList.remove('show'); 
+                        navigation.isNavigating = false;
+                        clearFocus();
+                        clearKeyRepeat();
+                        return; // Выход из обработчика
+                    }
+                    
+                    if (e.key === 'Enter' || e.key === ' ') { 
+                        clearKeyRepeat();
+                        if (navigation.focusedIndex !== -1) {
+                            navigation.navigableFilters[navigation.focusedIndex].click(); 
+                            e.preventDefault();
+                            actionHandled = true;
                         }
-                        handled = true;
-                        break;
-                }
+                    }
 
-                if (handled) {
-                    e.preventDefault(); // Запрещаем браузеру пытаться скроллить body (который и так hidden)
-                    showScroll(); // Показываем скроллбар
+                    if (isNavKey) {
+                        e.preventDefault();
+                        
+                        let direction;
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') direction = 'next';
+                        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') direction = 'prev';
+                        else if (e.key === 'PageUp' || e.key === 'Home') direction = 'first';
+                        else if (e.key === 'PageDown' || e.key === 'End') direction = 'last';
+                        
+                        // NEW: Логика задержки и повтора
+                        if (e.repeat === false) {
+                            clearKeyRepeat();
+                            if (direction) moveFocus(direction);
+                            
+                            // Для стрелок (next/prev) настраиваем повтор с задержкой
+                            if (direction === 'next' || direction === 'prev') {
+                                navigation.keyRepeatTimeout = setTimeout(() => {
+                                    moveFocus(direction); // Второй сдвиг после задержки
+                                    navigation.keyRepeatInterval = setInterval(() => {
+                                        moveFocus(direction); // Непрерывное перемещение
+                                    }, KEY_INTERVAL);
+                                }, KEY_DELAY);
+                            }
+                        }
+                        
+                        // Синхронизация отображения меню, независимо от повтора
+                        const newlyFocusedEl = navigation.navigableFilters[navigation.focusedIndex];
+                        if (newlyFocusedEl) {
+                            const isMenuItem = newlyFocusedEl.classList.contains('menu-content-item');
+                            const isMenuButton = newlyFocusedEl === UI.menuButton;
+
+                            if (isMenuItem && !UI.menuContent.classList.contains('show')) {
+                                UI.menuContent.classList.add('show');
+                            } 
+                            else if (!isMenuItem && !isMenuButton) {
+                                UI.menuContent.classList.remove('show');
+                            }
+                        }
+                        actionHandled = true;
+                    }
                 }
+                // --- КОНЕЦ ЛОГИКИ НАВИГАЦИИ ПО ФИЛЬТРАМ ---
+                
+                // --- ЛОГИКА СКРОЛЛИНГА АЛЬБОМОВ ---
+                if (!navigation.isNavigating && !actionHandled) { 
+                    const scrollAmount = 50; 
+                    const pageAmount = scrollContainer.clientHeight * 0.9;
+                    let handledScroll = false;
+
+                    switch (e.key) {
+                        case 'ArrowDown':
+                            scrollContainer.scrollTop += scrollAmount;
+                            handledScroll = true;
+                            break;
+                        case 'ArrowUp':
+                            scrollContainer.scrollTop -= scrollAmount;
+                            handledScroll = true;
+                            break;
+                        case 'PageDown':
+                            scrollContainer.scrollTop += pageAmount;
+                            handledScroll = true;
+                            break;
+                        case 'PageUp':
+                            scrollContainer.scrollTop -= pageAmount;
+                            handledScroll = true;
+                            break;
+                        case 'Home':
+                            scrollContainer.scrollTop = 0;
+                            handledScroll = true;
+                            break;
+                        case 'End':
+                            scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                            handledScroll = true;
+                            break;
+                        case ' ': 
+                            if (e.shiftKey) {
+                                scrollContainer.scrollTop -= pageAmount;
+                            } else {
+                                scrollContainer.scrollTop += pageAmount;
+                            }
+                            handledScroll = true;
+                            break;
+                    }
+
+                    if (handledScroll) {
+                        e.preventDefault(); 
+                        showScroll(); 
+                    }
+                }
+            });
+
+            // NEW: Keyup listener to stop repeat movement
+            window.addEventListener('keyup', (e) => {
+                clearKeyRepeat();
             });
         }
 
@@ -850,11 +1070,25 @@
                 UI.searchInput.value = '';
                 handleSearchInput({ target: UI.searchInput });
             });
+            
+            // --- NEW: Останавливаем навигацию по фокусу на поиске ---
+            UI.searchInput.addEventListener('focus', () => {
+                navigation.isNavigating = false;
+                clearFocus();
+                clearKeyRepeat(); // Дополнительная очистка
+            });
+            // --- END NEW ---
 
             UI.sortButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 UI.sortContent.classList.toggle('show');
                 UI.menuContent.classList.remove('show');
+                
+                // --- NEW: Выход из режима навигации при открытии меню сортировки ---
+                navigation.isNavigating = false;
+                clearFocus();
+                clearKeyRepeat(); // Дополнительная очистка
+                // --- END NEW ---
             });
 
             document.querySelectorAll('.sort-content-item').forEach(item => {
@@ -871,8 +1105,22 @@
 
             UI.menuButton.onclick = (e) => {
                 e.stopPropagation();
-                UI.menuContent.classList.toggle('show');
                 UI.sortContent.classList.remove('show');
+
+                // --- NEW: Синхронизация фокуса при открытии/закрытии меню ---
+                UI.menuContent.classList.toggle('show');
+
+                const menuButtonIndex = navigation.navigableFilters.findIndex(item => item === UI.menuButton);
+                if (menuButtonIndex !== -1) {
+                    if (UI.menuContent.classList.contains('show')) {
+                        navigation.isNavigating = true;
+                        focusElement(menuButtonIndex);
+                    } else {
+                        // Если меню закрывается, очищаем фокус, но не выходим из режима навигации
+                        clearFocus(); 
+                    }
+                }
+                // --- END NEW ---
             };
 
             initYearFilters();
@@ -907,9 +1155,23 @@
                 localStorage.setItem(STORAGE_KEYS.THEME, newThemeIsDark ? 'dark' : 'light');
             };
 
-            window.addEventListener('click', () => {
-                UI.menuContent.classList.remove('show');
+            window.addEventListener('click', (e) => {
+                // Close menus on outside click
                 UI.sortContent.classList.remove('show');
+                
+                // --- NEW: Выход из режима навигации по клику вне фильтров ---
+                let isFilterClick = UI.filtersContainer.contains(e.target) || 
+                                    UI.menuDropdown.contains(e.target);
+                
+                if (navigation.isNavigating && !isFilterClick) {
+                    navigation.isNavigating = false;
+                    clearFocus(); // clearFocus теперь сам закрывает меню
+                    clearKeyRepeat(); // Дополнительная очистка
+                } else if (!navigation.isNavigating) {
+                    // Если не в режиме навигации, но кликнули вне меню сортировки/фильтров, закрываем меню годов на всякий случай
+                    UI.menuContent.classList.remove('show');
+                }
+                // --- END NEW ---
             });
         });
     </script>
