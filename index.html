@@ -29,13 +29,6 @@
             --color-badge-dark: #C2E7FF;
             --color-shadow-light: rgba(60, 64, 67, 0.15);
             --color-shadow-dark: rgba(0, 0, 0, 0.5);
-            
-            /* Цвета скроллбара */
-            --color-scrollbar-thumb-light: rgba(60, 64, 67, 0.4);
-            --color-scrollbar-thumb-dark: rgba(196, 199, 197, 0.4);
-            --color-scrollbar-thumb-hover-light: rgba(60, 64, 67, 0.6);
-            --color-scrollbar-thumb-hover-dark: rgba(196, 199, 197, 0.6);
-
             --font-size-small: 14px;
             --header-item-spacing: 8px;
             --header-element-height: 36px;
@@ -55,8 +48,6 @@
             --color-link-active: var(--color-link-active-dark);
             --color-link-active-highlight: var(--color-link-active-highlight-dark);
             --color-badge: var(--color-badge-dark);
-            --color-scrollbar: var(--color-scrollbar-thumb-dark);
-            --color-scrollbar-hover: var(--color-scrollbar-thumb-hover-dark);
         }
 
         body { /* Light Theme Defaults */
@@ -70,20 +61,16 @@
             --color-link-active: var(--color-link-active-light);
             --color-link-active-highlight: var(--color-link-active-highlight-light);
             --color-badge: var(--color-badge-light);
-            --color-scrollbar: var(--color-scrollbar-thumb-light);
-            --color-scrollbar-hover: var(--color-scrollbar-thumb-hover-hover-light);
         }
 
         /* === Общие Стили === */
-        * { box-sizing: border-box; }
-        
-        /* Убираем скролл на body, чтобы скроллился только main */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* Важно: отключаем прокрутку страницы целиком */
+        * { box-sizing: border-box; scrollbar-width: none; }
+        *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+        body {
             font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding-top: 64px; 
             background-color: var(--color-background);
             color: var(--color-text-on-surface);
             transition: background-color 0.3s, color 0.3s;
@@ -108,6 +95,7 @@
             font-size: 20px; font-weight: 500; color: var(--color-text);
             transform: translateY(-2px); white-space: nowrap; overflow: hidden;
             text-overflow: ellipsis; display: block; width: 120px;
+            /* Изменение: Центрирование текста внутри блока */
             text-align: center;
         }
 
@@ -118,6 +106,7 @@
             margin-right: 0; 
             overflow: hidden; 
             flex-shrink: 1; 
+            /* НОВОЕ СВОЙСТВО: центрирование содержимого */
             justify-content: center;
         }
         
@@ -133,12 +122,6 @@
         .filter-link:hover { background-color: var(--color-surface); }
         .filter-link.active { color: var(--color-link-active); background-color: var(--color-link-active-highlight); }
         
-        /* === NEW: Стиль для фокуса клавиатуры (мимикрирует :hover) === */
-        .filter-link.keyboard-focus { background-color: var(--color-surface); }
-        /* При этом active link сохраняет свой цвет */
-        .filter-link.active.keyboard-focus { background-color: var(--color-link-active-highlight); } 
-        /* ============================================================= */
-
         /* --- Меню и Дропдауны --- */
         .menu-content, .sort-content {
             display: none; position: absolute; top: 48px;
@@ -147,55 +130,17 @@
             border-radius: 8px; width: 64px; z-index: 100; padding: 0; 
         }
         .menu-content.show, .sort-content.show { display: block; }
-
+        
         .menu-content {
             left: 0; max-height: calc(16 * 1.4em + 20px); overflow-y: auto;
-            /* ИЗМЕНЕНО: Стили скроллбара, как у album-grid для Firefox */
-            scrollbar-width: thin;
-            scrollbar-color: transparent transparent; /* Скрыт по умолчанию (Firefox) */
-            transition: scrollbar-color 0.3s;
+            scrollbar-width: thin; scrollbar-color: var(--color-text) var(--color-surface);
         }
-        
-        /* Показать скроллбар при наведении на меню (Firefox) */
-        .menu-content:hover {
-            scrollbar-color: var(--color-scrollbar) transparent;
-        }
-
-        /* Настройки скроллбара для Webkit (Chrome, Edge, Safari), как у album-grid */
-        .menu-content::-webkit-scrollbar {
-            width: 12px;
-            background-color: transparent;
-        }
-
-        .menu-content::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-
-        .menu-content::-webkit-scrollbar-thumb {
-            background-color: transparent; /* Скрыт по умолчанию */
-            border-radius: 6px;
-            border: 3px solid transparent;
-            background-clip: content-box;
-            transition: background-color 0.3s;
-        }
-
-        /* Показать скроллбар при наведении на меню для Webkit */
-        .menu-content:hover::-webkit-scrollbar-thumb {
-            background-color: var(--color-scrollbar);
-        }
-
-        .menu-content::-webkit-scrollbar-thumb:hover {
-            background-color: var(--color-scrollbar-hover);
-        }
-        /* Конец изменений для menu-content скроллбара */
         
         .sort-content {
             left: 50%; transform: translateX(-50%);
             max-height: calc(16 * 1.4em + 20px); overflow-y: auto;
             width: 200px;
         }
-        /* sort-content не требует отдельной прокрутки, т.к. его содержимое статично, 
-           но если бы было динамичным, здесь нужно было бы добавить аналогичные стили */
 
         .menu-content-item, .sort-content-item {
             display: block; padding: 10px 8px;
@@ -208,12 +153,6 @@
             background-color: var(--color-link-active-highlight);
         }
         
-        /* === NEW: Стиль для фокуса клавиатуры в меню === */
-        .menu-content-item.keyboard-focus { background-color: var(--color-surface); }
-        /* Fix: active item with keyboard focus should keep its active color */
-        .menu-content-item.active.keyboard-focus { background-color: var(--color-link-active-highlight); } 
-        /* ============================================== */
-
         .menu-dropdown { position: relative; display: none; margin-right: var(--header-item-spacing); flex-shrink: 0; }
         .menu-button {
             width: 40px; height: 40px; padding: 0;
@@ -221,10 +160,6 @@
             border-radius: 50%; cursor: pointer; transition: background-color 0.2s; color: var(--color-text); 
         }
         .menu-button:hover { background-color: var(--color-surface); }
-        
-        /* === NEW: Стиль для фокуса клавиатуры на кнопке меню === */
-        .menu-button.keyboard-focus { background-color: var(--color-surface); }
-        /* ======================================================= */
 
         /* --- Сортировка --- */
         .sort-dropdown { margin-right: 12px; position: relative; flex-shrink: 0; }
@@ -242,6 +177,7 @@
         
         .sort-content-item { display: flex; align-items: center; }
         .sort-content-item .material-icons { margin-right: 12px; font-size: 20px; color: var(--color-text); }
+        /* Добавил отступ к тексту сортировки, чтобы он не сливался с иконкой */
         .sort-content-item span[data-sort-label] { margin-right: 8px; }
 
         /* --- Поиск --- */
@@ -280,74 +216,15 @@
             cursor: pointer; border: 2px solid var(--color-surface); flex-shrink: 0;
         }
 
-        /* === Карточки и Сетка (Главный контейнер) === */
+        /* --- Карточки --- */
         .album-grid {
-            position: absolute;
-            top: 64px; /* Высота шапки */
-            bottom: 0; /* До самого низа */
-            left: 0;
-            right: 0;
-            
-            /* ИЗМЕНЕНО: overflow-y: scroll; заставляет браузер всегда резервировать место для скроллбара (12px), 
-               чтобы визуально компенсировать правый отступ 12px. */
-            overflow-y: scroll; 
-            
-            /* Отступ слева 24px, отступ справа 12px (компенсируется 12px скроллбара) */
-            padding: 24px 12px 24px 24px; 
-            
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 24px;
-            
-            align-content: flex-start; 
-            grid-auto-rows: max-content; 
-            
-            scroll-behavior: smooth;
-            
-            /* Настройки скроллбара для Firefox */
-            scrollbar-width: thin;
-            scrollbar-color: transparent transparent; /* Скрыт по умолчанию */
-            transition: scrollbar-color 0.3s;
+            padding: 24px; display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px;
         }
-
-        /* Класс для отображения скроллбара (добавляется JS) */
-        .album-grid.is-scrolling {
-            scrollbar-color: var(--color-scrollbar) transparent;
-        }
-
-        /* Настройки скроллбара для Webkit (Chrome, Edge, Safari) */
-        .album-grid::-webkit-scrollbar {
-            width: 12px;
-            background-color: transparent;
-        }
-
-        .album-grid::-webkit-scrollbar-track {
-            background-color: transparent;
-        }
-
-        .album-grid::-webkit-scrollbar-thumb {
-            background-color: transparent; /* Скрыт по умолчанию */
-            border-radius: 6px;
-            border: 3px solid transparent;
-            background-clip: content-box;
-            transition: background-color 0.3s;
-        }
-        
-        /* Когда класс активен или мышь прямо над скроллбаром */
-        .album-grid.is-scrolling::-webkit-scrollbar-thumb,
-        .album-grid::-webkit-scrollbar-thumb:hover {
-            background-color: var(--color-scrollbar);
-        }
-        
-        .album-grid::-webkit-scrollbar-thumb:hover {
-            background-color: var(--color-scrollbar-hover);
-        }
-
         .album-card {
             background-color: var(--color-card-background); border-radius: 8px;
             overflow: hidden; box-shadow: 0 1px 3px var(--color-shadow);
             transition: box-shadow 0.3s, transform 0.3s;
-            height: fit-content; 
         }
         .album-card:hover {
             box-shadow: 0 4px 8px var(--color-shadow); transform: translateY(-2px);
@@ -376,7 +253,7 @@
         }
 
         /* === Mobile Styles === */
-        @media (max-width: 800px) {
+        @media (max-width: 750px) {
             .header { padding: 0 10px; }
             .logo-text { display: none; }
             .logo-link { margin-right: 0; }
@@ -389,11 +266,6 @@
 
             .search-container { width: var(--search-width-mobile); }
             .filters { flex-grow: 0; }
-            
-            /* ИСПРАВЛЕНИЕ: Симметричный отступ для мобильных устройств */
-            .album-grid {
-                padding-right: 24px; 
-            }
         }
     </style>
 </head>
@@ -408,7 +280,7 @@
         <div class="filters" id="year-filters"></div>
         
         <div class="menu-dropdown">
-            <span class="material-icons menu-button" id="menu-button" data-year="menu-button">menu</span>
+            <span class="material-icons menu-button" id="menu-button">menu</span>
             <div class="menu-content" id="menu-content"></div>
         </div>
 
@@ -452,7 +324,7 @@
 
         function getLocaleStrings() {
             const userLang = (navigator.language || navigator.userLanguage).toLowerCase();
-            let lang = 'en'; 
+            let lang = 'en'; // По умолчанию - английский
 
             if (userLang.startsWith('ru')) {
                 lang = 'ru';
@@ -460,12 +332,15 @@
                 lang = 'uk';
             }
 
-            const strings = { lang: lang }; 
+            const strings = { lang: lang }; // Добавляем определенный язык в объект
             for (const key in TRANSLATIONS) {
+                // Используем строку для выбранного языка, с резервом на английский
                 strings[key] = TRANSLATIONS[key][lang] || TRANSLATIONS[key]['en'];
             }
             
+            // Устанавливаем атрибут lang на HTML-теге
             document.documentElement.lang = lang;
+            
             return strings;
         }
 
@@ -567,7 +442,6 @@
             searchInput: document.getElementById('search-input'),
             clearButton: document.getElementById('clear-search-button'),
             themeToggle: document.getElementById('theme-toggle'),
-            header: document.getElementById('main-header'),
         };
 
         const state = {
@@ -576,78 +450,9 @@
             search: ''
         };
 
-        // --- СОСТОЯНИЕ И ЛОГИКА НАВИГАЦИИ ПО ФИЛЬТРАМ ГОДОВ (КЛАВИАТУРА) ---
-        const KEY_DELAY = 300; 
-        const KEY_INTERVAL = 100; 
-        
-        const navigation = {
-            navigableFilters: [], 
-            focusedIndex: -1,
-            isNavigating: false,
-            focusedElement: null,
-            keyRepeatTimeout: null,
-            keyRepeatInterval: null, 
-        };
-
-        function clearFocus() {
-            if (navigation.focusedElement) {
-                navigation.focusedElement.classList.remove('keyboard-focus');
-            }
-            navigation.focusedIndex = -1;
-            navigation.focusedElement = null;
-            UI.menuContent.classList.remove('show'); 
-        }
-
-        function focusElement(index) {
-            clearFocus();
-
-            if (index < 0 || index >= navigation.navigableFilters.length) {
-                return;
-            }
-
-            navigation.focusedIndex = index;
-            navigation.focusedElement = navigation.navigableFilters[index];
-            const focusedEl = navigation.focusedElement;
-
-            focusedEl.classList.add('keyboard-focus');
-
-            if (focusedEl.classList.contains('filter-link')) {
-                focusedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-            } else if (focusedEl.classList.contains('menu-content-item')) {
-                UI.menuContent.classList.add('show');
-                focusedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-        
-        function clearKeyRepeat() {
-            clearTimeout(navigation.keyRepeatTimeout);
-            clearInterval(navigation.keyRepeatInterval);
-            navigation.keyRepeatTimeout = null;
-            navigation.keyRepeatInterval = null;
-        }
-
-        function moveFocus(direction) {
-            const len = navigation.navigableFilters.length;
-            let newIndex = navigation.focusedIndex;
-
-            if (direction === 'next') {
-                newIndex = (newIndex + 1) % len;
-            } else if (direction === 'prev') {
-                newIndex = (newIndex - 1 + len) % len;
-            } else if (direction === 'first') {
-                newIndex = 0;
-            } else if (direction === 'last') {
-                newIndex = len - 1;
-            }
-
-            if (newIndex !== navigation.focusedIndex && newIndex !== -1) {
-                focusElement(newIndex);
-            }
-        }
-        // --- КОНЕЦ ЛОГИКИ НАВИГАЦИИ ПО КЛАВИАТУРЕ ---
-
         // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
         function isRecentlyAdded(addedDateStr) {
+            // Считаем "недавно добавленными" альбомы, добавленные в последние 7 дней
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             const addedDate = new Date(addedDateStr);
@@ -659,6 +464,7 @@
             card.className = 'album-card';
             const badgeHTML = isRecentlyAdded(album.addedDate) ? '<div class="new-badge"><span class="material-icons">notifications</span></div>' : '';
             
+            // Определяем заголовок на основе текущего языка, с резервом на русский
             const currentLang = STRINGS.lang;
             const descriptiveTitle = album.title[currentLang] || album.title['ru'];
             const fullTitle = album.prefix + descriptiveTitle;
@@ -673,6 +479,7 @@
                     </div>
                 </a>
             `;
+            // Безопасная вставка текста
             card.querySelector('.album-title').textContent = fullTitle;
             return card;
         }
@@ -681,13 +488,19 @@
             let sorted = [...albums];
             const compareDates = (a, b) => new Date(a).getTime() - new Date(b).getTime();
             
-            // ВАЖНОЕ ПРАВИЛО: Всегда сортируй карточки от новых альбомов к старым, если не выбран другой критерий
-            if (state.sort === 'newest') {
-                sorted.sort((a, b) => b.date.localeCompare(a.date));
-            } else if (state.sort === 'oldest') {
-                sorted.sort((a, b) => a.date.localeCompare(b.date));
-            } else if (state.sort === 'added') {
-                sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate));
+            switch (state.sort) {
+                case 'newest':
+                    // Сортировка от новых альбомов к старым (по дате альбома, убывание)
+                    sorted.sort((a, b) => b.date.localeCompare(a.date));
+                    break;
+                case 'oldest':
+                    // Сортировка от старых альбомов к новым (по дате альбома, возрастание)
+                    sorted.sort((a, b) => a.date.localeCompare(b.date));
+                    break;
+                case 'added':
+                    // Сортировка по дате добавления (убывание)
+                    sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate));
+                    break;
             }
             return sorted;
         }
@@ -696,13 +509,15 @@
             UI.grid.innerHTML = '';
             let result = getSortedAlbums();
 
+            // Фильтр по году
             if (state.year !== 'all') {
                 result = result.filter(a => a.year === state.year);
             }
 
+            // Фильтр по поиску (используем локализованное название)
             if (state.search) {
                 const query = state.search.toLowerCase();
-                const currentLang = STRINGS.lang;
+                const currentLang = STRINGS.lang; // Используем текущий язык
 
                 result = result.filter(a => {
                     const descriptiveTitle = a.title[currentLang] || a.title['ru'];
@@ -714,6 +529,7 @@
             if (result.length > 0) {
                 result.forEach(album => UI.grid.appendChild(createAlbumCard(album)));
             } else {
+                // Используем локализованную строку "Не найдено..."
                 UI.grid.innerHTML = `<p style="text-align: center; width: 100%; color: var(--color-text); padding: 20px;">${STRINGS.not_found}</p>`;
             }
 
@@ -721,9 +537,12 @@
         }
 
         function updateActiveClasses() {
+            // Фильтры
             document.querySelectorAll('.filter-link, .menu-content-item').forEach(el => {
                 el.classList.toggle('active', el.getAttribute('data-year') === state.year);
             });
+
+            // Сортировка
             document.querySelectorAll('.sort-content-item').forEach(el => {
                 el.classList.toggle('active', el.getAttribute('data-sort') === state.sort);
             });
@@ -731,6 +550,7 @@
 
         function updateSortButtonUI() {
             const map = {
+                // Используем локализованные строки
                 newest: { icon: 'arrow_downward', label: STRINGS.newest_sort },
                 oldest: { icon: 'arrow_upward', label: STRINGS.oldest_sort },
                 added: { icon: 'notifications', label: STRINGS.added_sort }
@@ -740,6 +560,7 @@
             UI.sortLabel.textContent = current.label;
         }
 
+        // --- Debounce для поиска ---
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -755,335 +576,120 @@
             renderAlbums();
         }, 300);
 
-        // --- ЛОГИКА ФИЛЬТРАЦИИ И НАЖАТИЯ (Touch Fix) ---
-
-        // NEW: Единая функция для обработки клика/тапа по фильтру
-        const handleFilterSelection = (el, year) => {
-            // Логика навигации клавиатурой (фокус)
-            const clickedIndex = navigation.navigableFilters.findIndex(item => item === el);
-            if (clickedIndex !== -1) {
-                navigation.isNavigating = true;
-                focusElement(clickedIndex);
-                if (el.classList.contains('menu-content-item')) {
-                    UI.menuContent.classList.remove('show');
-                }
-            } else {
-                 clearFocus();
-                 navigation.isNavigating = false;
-            }
-            
-            // Логика фильтрации
-            state.year = year;
-            localStorage.setItem(STORAGE_KEYS.YEAR, year);
-            renderAlbums();
-        };
-
-        // Инициализация Фильтров
+        // --- Инициализация Фильтров ---
         function initYearFilters() {
             const years = [...new Set(albums.map(a => a.year))].sort((a, b) => b - a);
-            
+
+            // Вспомогательная функция для создания ссылок фильтра
             const createLink = (text, year, isMenuItem) => {
                 const el = document.createElement(isMenuItem ? 'div' : 'a');
                 el.className = isMenuItem ? 'menu-content-item' : 'filter-link';
                 el.setAttribute('data-year', year);
                 el.textContent = text;
-                
-                // NEW: Обработчик для мыши (click)
-                el.addEventListener('click', (e) => {
+                el.onclick = (e) => {
                     e.stopPropagation();
-                    handleFilterSelection(el, year);
-                });
-
-                // NEW: Обработчик для тача (touchend) с предотвращением стандартного click
-                el.addEventListener('touchend', (e) => {
-                    e.preventDefault(); 
-                    handleFilterSelection(el, year);
-                });
-                
+                    state.year = year;
+                    localStorage.setItem(STORAGE_KEYS.YEAR, year);
+                    renderAlbums();
+                };
                 return el;
             };
 
-            UI.filtersContainer.appendChild(createLink(STRINGS.all_filter, 'all', false));
+            // создаем ссылку "Все" и добавляем ее в шапку
+            UI.filtersContainer.appendChild(createLink(STRINGS.all_filter, 'all', false)); // Используем локализованную строку
             years.forEach(y => UI.filtersContainer.appendChild(createLink(y, y, false)));
 
+            // Функция пересчета видимости (Reset -> Measure -> Distribute)
             function updateFiltersVisibility() {
-                // ... (Остальная логика видимости и построения меню)
+                // 1. Сброс: Скрываем меню, чтобы узнать реальную полную ширину
                 UI.menuDropdown.style.display = 'none';
                 const allElements = Array.from(UI.filtersContainer.children);
+                // Показываем все элементы временно, чтобы offsetWidth был корректен
                 allElements.forEach(el => el.style.display = 'inline-flex');
 
+                // 2. Замер доступного места
                 const containerWidth = UI.filtersContainer.offsetWidth;
-                const itemWidth = 64; 
-                const menuBtnWidth = 48; 
+                const itemWidth = 64; // 56px + 8px margin
+                const menuBtnWidth = 48; // 40px + 8px margin
                 const totalNeeded = allElements.length * itemWidth;
 
-                const previouslyFocusedData = navigation.focusedElement 
-                    ? navigation.focusedElement.getAttribute('data-year') || 'menu-button' 
-                    : null;
-                clearFocus(); 
-                clearKeyRepeat(); 
-                
+                // 3. Распределение
                 UI.menuContent.innerHTML = '';
 
+                // Если всё влезает без меню
+                if (totalNeeded <= containerWidth) {
+                    return;
+                }
+
+                // Если не влезает, вычитаем место под кнопку
+                const usableWidth = containerWidth - menuBtnWidth;
+                let usedWidth = 0;
                 let hasHidden = false;
 
-                if (totalNeeded > containerWidth) {
-                    const usableWidth = containerWidth - menuBtnWidth;
-                    let usedWidth = 0;
-                    
-                    allElements.forEach(el => {
-                        if (usedWidth + itemWidth <= usableWidth) {
-                            el.style.display = 'inline-flex';
-                            usedWidth += itemWidth;
-                        } else {
-                            el.style.display = 'none';
-                            hasHidden = true;
-                            // NEW: Пересоздаем элементы меню с новыми обработчиками
-                            const menuItem = createLink(el.textContent, el.getAttribute('data-year'), true);
-                            UI.menuContent.appendChild(menuItem);
-                        }
-                    });
-                }
-                
+                allElements.forEach(el => {
+                    if (usedWidth + itemWidth <= usableWidth) {
+                        el.style.display = 'inline-flex';
+                        usedWidth += itemWidth;
+                    } else {
+                        el.style.display = 'none';
+                        hasHidden = true;
+                        // Клонируем логику в меню
+                        UI.menuContent.appendChild(createLink(el.textContent, el.getAttribute('data-year'), true));
+                    }
+                });
+
                 if (hasHidden) {
                     UI.menuDropdown.style.display = 'block';
                 }
-
-                // ... (Логика восстановления фокуса клавиатуры)
-                navigation.navigableFilters = Array.from(UI.filtersContainer.children).filter(el => el.style.display !== 'none');
-                
-                if (hasHidden) {
-                    navigation.navigableFilters.push(UI.menuButton); 
-                    navigation.navigableFilters.push(...Array.from(UI.menuContent.children)); 
-                }
-                
-                if (navigation.isNavigating && previouslyFocusedData) {
-                    let newIndex = navigation.navigableFilters.findIndex(el => {
-                        if(el === UI.menuButton) return previouslyFocusedData === 'menu-button';
-                        return el.getAttribute('data-year') === previouslyFocusedData;
-                    });
-                    
-                    if (newIndex !== -1) {
-                        focusElement(newIndex);
-                    } else {
-                        navigation.isNavigating = false;
-                        clearFocus();
-                    }
-                } else {
-                    navigation.isNavigating = false;
-                    clearFocus();
-                }
             }
 
+            // Слушатели resize
             const debouncedResize = debounce(updateFiltersVisibility, 50);
             window.addEventListener('resize', debouncedResize);
             window.addEventListener('orientationchange', () => setTimeout(updateFiltersVisibility, 300));
 
+            // Первый запуск
             requestAnimationFrame(updateFiltersVisibility);
-        }
-
-        // --- SCROLLBAR LOGIC и Keydown/Keyup (без изменений) ---
-        function initScrollLogic() {
-            let scrollTimeout;
-            const scrollContainer = UI.grid;
-
-            const showScroll = () => {
-                scrollContainer.classList.add('is-scrolling');
-                clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(() => {
-                    scrollContainer.classList.remove('is-scrolling');
-                }, 1500);
-            };
-
-            document.addEventListener('mousemove', (e) => {
-                if (window.innerWidth - e.clientX < 20) {
-                    showScroll();
-                }
-            });
-
-            scrollContainer.addEventListener('scroll', () => {
-                showScroll();
-            });
-            
-            UI.header.addEventListener('wheel', (e) => {
-                if (UI.menuContent.classList.contains('show') || UI.sortContent.classList.contains('show')) {
-                    return; 
-                }
-
-                scrollContainer.scrollTop += e.deltaY;
-                showScroll();
-            }, { passive: true });
-
-            window.addEventListener('keydown', (e) => {
-                if (document.activeElement === UI.searchInput) {
-                    clearKeyRepeat(); 
-                    return; 
-                }
-
-                const isNavKey = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'PageUp', 'Home', 'PageDown', 'End'].includes(e.key);
-                let actionHandled = false;
-
-                if (navigation.isNavigating) {
-                    
-                    if (e.key === 'Escape') { 
-                        e.preventDefault();
-                        UI.menuContent.classList.remove('show'); 
-                        navigation.isNavigating = false;
-                        clearFocus();
-                        clearKeyRepeat();
-                        return; 
-                    }
-                    
-                    if (e.key === 'Enter' || e.key === ' ') { 
-                        clearKeyRepeat();
-                        if (navigation.focusedIndex !== -1) {
-                            navigation.navigableFilters[navigation.focusedIndex].click(); 
-                            e.preventDefault();
-                            actionHandled = true;
-                        }
-                    }
-
-                    if (isNavKey) {
-                        e.preventDefault();
-                        
-                        let direction;
-                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') direction = 'next';
-                        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') direction = 'prev';
-                        else if (e.key === 'PageUp' || e.key === 'Home') direction = 'first';
-                        else if (e.key === 'PageDown' || e.key === 'End') direction = 'last';
-                        
-                        if (e.repeat === false) {
-                            clearKeyRepeat();
-                            if (direction) moveFocus(direction);
-                            
-                            if (direction === 'next' || direction === 'prev') {
-                                navigation.keyRepeatTimeout = setTimeout(() => {
-                                    moveFocus(direction); 
-                                    navigation.keyRepeatInterval = setInterval(() => {
-                                        moveFocus(direction); 
-                                    }, KEY_INTERVAL);
-                                }, KEY_DELAY);
-                            }
-                        }
-                        
-                        const newlyFocusedEl = navigation.navigableFilters[navigation.focusedIndex];
-                        if (newlyFocusedEl) {
-                            const isMenuItem = newlyFocusedEl.classList.contains('menu-content-item');
-                            const isMenuButton = newlyFocusedEl === UI.menuButton;
-
-                            if (isMenuItem && !UI.menuContent.classList.contains('show')) {
-                                UI.menuContent.classList.add('show');
-                            } 
-                            else if (!isMenuItem && !isMenuButton) {
-                                UI.menuContent.classList.remove('show');
-                            }
-                        }
-                        actionHandled = true;
-                    }
-                }
-                
-                if (!navigation.isNavigating && !actionHandled) { 
-                    const scrollAmount = 50; 
-                    const pageAmount = scrollContainer.clientHeight * 0.9;
-                    let handledScroll = false;
-
-                    switch (e.key) {
-                        case 'ArrowDown':
-                            scrollContainer.scrollTop += scrollAmount;
-                            handledScroll = true;
-                            break;
-                        case 'ArrowUp':
-                            scrollContainer.scrollTop -= scrollAmount;
-                            handledScroll = true;
-                            break;
-                        case 'PageDown':
-                            scrollContainer.scrollTop += pageAmount;
-                            handledScroll = true;
-                            break;
-                        case 'PageUp':
-                            scrollContainer.scrollTop -= pageAmount;
-                            handledScroll = true;
-                            break;
-                        case 'Home':
-                            scrollContainer.scrollTop = 0;
-                            handledScroll = true;
-                            break;
-                        case 'End':
-                            scrollContainer.scrollTop = scrollContainer.scrollHeight;
-                            handledScroll = true;
-                            break;
-                        case ' ': 
-                            if (e.shiftKey) {
-                                scrollContainer.scrollTop -= pageAmount;
-                            } else {
-                                scrollContainer.scrollTop += pageAmount;
-                            }
-                            handledScroll = true;
-                            break;
-                    }
-
-                    if (handledScroll) {
-                        e.preventDefault(); 
-                        showScroll(); 
-                    }
-                }
-            });
-
-            window.addEventListener('keyup', (e) => {
-                clearKeyRepeat();
-            });
         }
 
         // --- Инициализация ---
         document.addEventListener('DOMContentLoaded', () => {
+            // --- Локализация статических элементов ---
             document.title = STRINGS.title;
             UI.logoText.textContent = STRINGS.logo_text;
             UI.searchInput.placeholder = STRINGS.search_placeholder;
             
+            // Заполняем элементы выпадающего списка сортировки
             document.querySelector('.sort-content-item[data-sort="newest"]').querySelector('span[data-sort-label]').textContent = STRINGS.newest_sort;
             document.querySelector('.sort-content-item[data-sort="oldest"]').querySelector('span[data-sort-label]').textContent = STRINGS.oldest_sort;
             document.querySelector('.sort-content-item[data-sort="added"]').querySelector('span[data-sort-label]').textContent = STRINGS.added_sort;
 
+
+            // Загрузка из Storage
             state.year = localStorage.getItem(STORAGE_KEYS.YEAR) || 'all';
             state.sort = localStorage.getItem(STORAGE_KEYS.SORT) || 'newest';
             state.search = localStorage.getItem(STORAGE_KEYS.SEARCH) || '';
 
+            // UI Setup
             UI.searchInput.value = state.search;
             if(state.search) UI.clearButton.style.display = 'block';
             updateSortButtonUI();
             
+            // Event Listeners
             UI.searchInput.addEventListener('input', handleSearchInput);
             UI.clearButton.addEventListener('click', () => {
                 UI.searchInput.value = '';
                 handleSearchInput({ target: UI.searchInput });
             });
-            
-            UI.searchInput.addEventListener('focus', () => {
-                navigation.isNavigating = false;
-                clearFocus();
-                clearKeyRepeat(); 
-            });
 
-            // NEW: Обработчик клика/тапа для кнопки сортировки
-            const handleSortButtonClick = (e) => {
+            UI.sortButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 UI.sortContent.classList.toggle('show');
                 UI.menuContent.classList.remove('show');
-                
-                navigation.isNavigating = false;
-                clearFocus();
-                clearKeyRepeat(); 
-            };
-
-            UI.sortButton.addEventListener('click', handleSortButtonClick);
-            UI.sortButton.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                handleSortButtonClick(e);
             });
 
-            // NEW: Обработчики клика/тапа для элементов сортировки
             document.querySelectorAll('.sort-content-item').forEach(item => {
-                const handleSortItemClick = (e) => {
+                item.onclick = (e) => {
                     e.stopPropagation();
                     const newSort = item.getAttribute('data-sort');
                     state.sort = newSort;
@@ -1092,42 +698,21 @@
                     renderAlbums();
                     UI.sortContent.classList.remove('show');
                 };
-                
-                item.addEventListener('click', handleSortItemClick);
-                item.addEventListener('touchend', (e) => {
-                    e.preventDefault();
-                    handleSortItemClick(e);
-                });
             });
 
-            // NEW: Обработчик клика/тапа для кнопки меню годов
-            const handleMenuClick = (e) => {
+            UI.menuButton.onclick = (e) => {
                 e.stopPropagation();
-                UI.sortContent.classList.remove('show');
                 UI.menuContent.classList.toggle('show');
-
-                const menuButtonIndex = navigation.navigableFilters.findIndex(item => item === UI.menuButton);
-                if (menuButtonIndex !== -1) {
-                    if (UI.menuContent.classList.contains('show')) {
-                        navigation.isNavigating = true;
-                        focusElement(menuButtonIndex);
-                    } else {
-                        clearFocus(); 
-                    }
-                }
+                UI.sortContent.classList.remove('show');
             };
-            
-            UI.menuButton.addEventListener('click', handleMenuClick);
-            UI.menuButton.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                handleMenuClick(e);
-            });
+
 
             initYearFilters();
             renderAlbums();
-            initScrollLogic();
 
             // --- ТЕМНАЯ / СВЕТЛАЯ ТЕМА ---
+
+            // 1. ПРОВЕРКА НАЧАЛЬНОГО СОСТОЯНИЯ
             const applyTheme = (isDark) => {
                 document.body.classList.toggle('dark-theme', isDark);
                 UI.themeToggle.textContent = isDark ? 'light_mode' : 'nightlight_round';
@@ -1137,48 +722,41 @@
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
             if (savedTheme) {
+                // Если есть ручной выбор - используем его
                 applyTheme(savedTheme === 'dark');
             } else {
+                // Если нет — ставим как в системе сейчас
                 applyTheme(mediaQuery.matches);
             }
 
+            // 2. СЛУШАТЕЛЬ СИСТЕМНЫХ ИЗМЕНЕНИЙ (Самое важное для вас)
+            // Сработает, если вы поменяете тему в настройках телефона, не перезагружая страницу
             mediaQuery.addEventListener('change', (e) => {
+                // Меняем тему автоматически, ТОЛЬКО если пользователь НЕ переопределил её вручную
                 if (!localStorage.getItem(STORAGE_KEYS.THEME)) {
                     applyTheme(e.matches);
                 }
             });
 
-            // NEW: Обработчик клика/тапа для кнопки переключения темы
-            const handleThemeToggle = () => {
+            // 3. Ручное переключение по кнопке
+            UI.themeToggle.onclick = () => {
+                // Смотрим, какая тема сейчас, и меняем на противоположную
                 const isCurrentDark = document.body.classList.contains('dark-theme');
                 const newThemeIsDark = !isCurrentDark;
+                
                 applyTheme(newThemeIsDark);
+                
+                // ЗАПОМИНАЕМ выбор. С этого момента автоматика (пункт 2) перестанет работать,
+                // пока пользователь не очистит кэш. Это стандартное поведение.
                 localStorage.setItem(STORAGE_KEYS.THEME, newThemeIsDark ? 'dark' : 'light');
             };
 
-            UI.themeToggle.addEventListener('click', handleThemeToggle);
-            UI.themeToggle.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                handleThemeToggle();
-            });
-
-            window.addEventListener('click', (e) => {
+            // Close menus on outside click
+            window.addEventListener('click', () => {
+                UI.menuContent.classList.remove('show');
                 UI.sortContent.classList.remove('show');
-                
-                let isFilterClick = UI.filtersContainer.contains(e.target) || 
-                                    UI.menuDropdown.contains(e.target);
-                
-                if (navigation.isNavigating && !isFilterClick) {
-                    navigation.isNavigating = false;
-                    clearFocus(); 
-                    clearKeyRepeat(); 
-                } else if (!navigation.isNavigating) {
-                    UI.menuContent.classList.remove('show');
-                }
             });
         });
     </script>
 </body>
 </html>
-
-
