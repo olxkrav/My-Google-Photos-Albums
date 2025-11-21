@@ -100,6 +100,8 @@
             box-shadow: 0 2px 4px var(--color-shadow);
             z-index: 1000;
             transition: background-color 0.3s, border-color 0.3s;
+	    user-select: none; 
+            -webkit-user-select: none;
         }
         
         .logo-link { display: flex; align-items: center; margin-right: 32px; flex-shrink: 0; overflow: hidden; }
@@ -238,6 +240,8 @@
             background-color: var(--color-surface); color: var(--color-text);
             font-size: var(--font-size-small); width: 100%; outline: none;
             transition: background-color 0.3s; height: var(--header-element-height); 
+	    user-select: text; 
+            -webkit-user-select: text;
         }
         .search-input:hover, .search-input:focus { background-color: var(--color-card-background); }
         .search-icon {
