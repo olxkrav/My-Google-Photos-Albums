@@ -260,7 +260,6 @@
             border-radius: 8px;
             z-index: 100;
             padding: 0;
-            /* ИЗМЕНЕНО: Высота для 10 пунктов (14px шрифт + 20px padding = 34px * 10 = 340px) */
             max-height: 340px;
             overflow-y: auto;
             scrollbar-width: thin;
@@ -430,7 +429,9 @@
 
     <main class="album-grid" id="album-grid"></main>
 
-    <script src="albums.js"></script>
+    <script>
+        document.write('<script src="albums.js?t=' + Date.now() + '"></scr' + 'ipt>');
+    </script>
 
     <script>
         // --- ЛОКАЛИЗАЦИЯ ---
@@ -447,14 +448,9 @@
 
         // --- ДАННЫЕ ДЛЯ МЕНЮ ПРЕДЛОЖЕНИЙ ---
         const SEARCH_SUGGESTIONS_DATA = [
-            { ru: 'Арсен', uk: 'Арсен', en: 'Arsenii' },
-            { ru: 'Матве', uk: 'Матві', en: 'Matviy' },
             { ru: 'день рождения', uk: 'день народження', en: 'birthday' },
-            { ru: 'авто', uk: 'авто', en: 'car' },
-            { ru: 'фестиваль', uk: 'фестиваль', en: 'festival' },
-            { ru: 'праздник', uk: 'свято', en: 'holiday' },
-            { ru: 'день', uk: 'день', en: 'day' },
-            { ru: 'кемпинг', uk: 'кемпінг', en: 'camping' }
+            { ru: 'Арсен', uk: 'Арсен', en: 'Arsenii' },
+            { ru: 'Матве', uk: 'Матві', en: 'Matviy' }
         ];
 
         function getLocaleStrings() {
@@ -621,7 +617,7 @@
             renderAlbums();
         }, 300);
 
-        // --- ЛОГИКА ПРЕДЛОЖЕНИЙ ПОИСКА (ИСПРАВЛЕНО ДЛЯ MOBILE И ВЫСОТЫ) ---
+        // --- ЛОГИКА ПРЕДЛОЖЕНИЙ ПОИСКА ---
         function initSearchSuggestions() {
             UI.searchSuggestions.innerHTML = '';
             const currentLang = STRINGS.lang;
@@ -649,19 +645,16 @@
                 UI.searchSuggestions.classList.add('show');
             });
 
-            // ВАЖНО для Desktop: чтобы клик по инпуту не закрывал меню (из-за window click)
             UI.searchInput.addEventListener('click', (e) => {
                 e.stopPropagation();
                 UI.searchSuggestions.classList.add('show');
             });
             
-            // ВАЖНО для Mobile: гарантия открытия при тапе
             UI.searchInput.addEventListener('touchstart', (e) => {
                 e.stopPropagation();
                 UI.searchSuggestions.classList.add('show');
             }, { passive: true });
 
-            // ВАЖНО для Mobile: предотвращаем закрытие при скролле (touchmove) или тапе внутри меню
             ['click', 'touchstart', 'touchmove'].forEach(evt => {
                 UI.searchSuggestions.addEventListener(evt, (e) => {
                     e.stopPropagation(); 
@@ -834,10 +827,15 @@
             if(state.search) UI.clearButton.style.display = 'block';
             updateSortButtonUI();
             
-            UI.searchInput.addEventListener('input', handleSearchInput);
+            UI.searchInput.addEventListener('input', (e) => {
+                UI.searchSuggestions.classList.remove('show'); 
+                handleSearchInput(e);
+            });
+
             UI.clearButton.addEventListener('click', () => {
                 UI.searchInput.value = '';
                 handleSearchInput({ target: UI.searchInput });
+                UI.searchInput.focus(); // ДОБАВЛЕНО: Установка фокуса на поле поиска
             });
 
             UI.sortButton.addEventListener('click', (e) => {
@@ -902,7 +900,7 @@
             window.addEventListener('click', () => {
                 UI.menuContent.classList.remove('show');
                 UI.sortContent.classList.remove('show');
-                UI.searchSuggestions.classList.remove('show'); // Скрывать при клике вне
+                UI.searchSuggestions.classList.remove('show'); 
             });
         });
     </script>
