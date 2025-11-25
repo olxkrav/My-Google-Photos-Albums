@@ -429,9 +429,7 @@
 
     <main class="album-grid" id="album-grid"></main>
 
-    <script>
-        document.write('<script src="albums.js?t=' + Date.now() + '"></scr' + 'ipt>');
-    </script>
+    <script src="albums.js"></script>
 
     <script>
         // --- ЛОКАЛИЗАЦИЯ ---
@@ -448,9 +446,17 @@
 
         // --- ДАННЫЕ ДЛЯ МЕНЮ ПРЕДЛОЖЕНИЙ ---
         const SEARCH_SUGGESTIONS_DATA = [
+            { ru: 'арсен', uk: 'арсен', en: 'arsenii' },
+            { ru: 'матве', uk: 'матві', en: 'matviy' },
             { ru: 'день рождения', uk: 'день народження', en: 'birthday' },
-            { ru: 'Арсен', uk: 'Арсен', en: 'Arsenii' },
-            { ru: 'Матве', uk: 'Матві', en: 'Matviy' }
+            { ru: 'день', uk: 'день', en: 'day' },
+            { ru: 'праздник', uk: 'свято', en: 'holiday' },
+            { ru: 'фестиваль', uk: 'фестиваль', en: 'festival' },
+            { ru: 'кемпинг', uk: 'кемпінг', en: 'camping' },
+            { ru: 'авто', uk: 'авто', en: 'car' },
+            { ru: 'концерт', uk: 'концерт', en: 'concert' },
+            { ru: 'музей', uk: 'музей', en: 'museum' },
+            { ru: 'выставка', uk: 'виставка', en: 'exibition' },
         ];
 
         function getLocaleStrings() {
@@ -506,6 +512,32 @@
             sort: localStorage.getItem(STORAGE_KEYS.SORT) || 'newest', 
             search: ''
         };
+        
+        // --- ЛОГИКА ВЗАИМНОГО ЗАКРЫТИЯ МЕНЮ (НОВАЯ ФУНКЦИОНАЛЬНОСТЬ) ---
+        function closeAllMenus(excludeElement = null) {
+            const menus = [UI.menuContent, UI.sortContent, UI.searchSuggestions];
+            menus.forEach(menu => {
+                if (menu && menu !== excludeElement) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+
+        function toggleMenu(menuElement, e) {
+            e.stopPropagation();
+            const isShowing = menuElement.classList.contains('show');
+            closeAllMenus(menuElement);
+            if (!isShowing) {
+                menuElement.classList.add('show');
+            }
+        }
+        
+        function openMenu(menuElement, e) {
+            e.stopPropagation();
+            closeAllMenus(menuElement);
+            menuElement.classList.add('show');
+        }
+        // -------------------------------------------------------------------
 
         // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
         function isRecentlyAdded(addedDateStr) {
@@ -640,21 +672,21 @@
                 };
                 UI.searchSuggestions.appendChild(div);
             });
-
-            UI.searchInput.addEventListener('focus', () => {
-                UI.searchSuggestions.classList.add('show');
+            
+            // ОБНОВЛЕНО: Используем openMenu для закрытия других меню
+            UI.searchInput.addEventListener('focus', (e) => {
+                openMenu(UI.searchSuggestions, e);
             });
 
             UI.searchInput.addEventListener('click', (e) => {
-                e.stopPropagation();
-                UI.searchSuggestions.classList.add('show');
+                openMenu(UI.searchSuggestions, e);
             });
             
             UI.searchInput.addEventListener('touchstart', (e) => {
-                e.stopPropagation();
-                UI.searchSuggestions.classList.add('show');
+                openMenu(UI.searchSuggestions, e);
             }, { passive: true });
 
+            // Запрет закрытия меню при взаимодействии внутри
             ['click', 'touchstart', 'touchmove'].forEach(evt => {
                 UI.searchSuggestions.addEventListener(evt, (e) => {
                     e.stopPropagation(); 
@@ -827,22 +859,25 @@
             if(state.search) UI.clearButton.style.display = 'block';
             updateSortButtonUI();
             
+            // Обработчик ввода текста: скрывает меню предложений сразу при начале ввода
             UI.searchInput.addEventListener('input', (e) => {
-                UI.searchSuggestions.classList.remove('show'); 
+                UI.searchSuggestions.classList.remove('show');
                 handleSearchInput(e);
             });
 
-            UI.clearButton.addEventListener('click', () => {
+            // ОБНОВЛЕНО: Нажатие кнопки очистки вызывает меню предложений
+            UI.clearButton.addEventListener('click', (e) => {
                 UI.searchInput.value = '';
                 handleSearchInput({ target: UI.searchInput });
-                UI.searchInput.focus(); // ДОБАВЛЕНО: Установка фокуса на поле поиска
+                
+                // НОВОЕ: Открываем меню предложений
+                openMenu(UI.searchSuggestions, e); 
+                UI.searchInput.focus(); 
             });
 
+            // ОБНОВЛЕНО: Использование toggleMenu для взаимного закрытия
             UI.sortButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                UI.sortContent.classList.toggle('show');
-                UI.menuContent.classList.remove('show');
-                UI.searchSuggestions.classList.remove('show');
+                toggleMenu(UI.sortContent, e);
             });
 
             document.querySelectorAll('.sort-content-item').forEach(item => {
@@ -857,11 +892,9 @@
                 };
             });
 
+            // ОБНОВЛЕНО: Использование toggleMenu для взаимного закрытия
             UI.menuButton.onclick = (e) => {
-                e.stopPropagation();
-                UI.menuContent.classList.toggle('show');
-                UI.sortContent.classList.remove('show');
-                UI.searchSuggestions.classList.remove('show');
+                toggleMenu(UI.menuContent, e);
             };
 
             initYearFilters();
@@ -897,10 +930,9 @@
                 localStorage.setItem(STORAGE_KEYS.THEME, newThemeIsDark ? 'dark' : 'light');
             };
 
+            // ОБНОВЛЕНО: Использование closeAllMenus для закрытия всех меню при клике вне
             window.addEventListener('click', () => {
-                UI.menuContent.classList.remove('show');
-                UI.sortContent.classList.remove('show');
-                UI.searchSuggestions.classList.remove('show'); 
+                closeAllMenus();
             });
         });
     </script>
