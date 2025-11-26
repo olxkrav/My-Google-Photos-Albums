@@ -421,12 +421,8 @@
             search: ''
         };
         
-        // --- УПРАВЛЕНИЕ МЕНЮ И ФЛАГАМИ ДЛЯ МОБИЛЬНОЙ КОРРЕКЦИИ ---
+        // --- УПРАВЛЕНИЕ МЕНЮ ---
         
-        // Флаг для подавления синтетического 'click' после 'touchstart'
-        let touchToggleActive = false;
-        const TOUCH_TOGGLE_DURATION = 500; // Миллисекунды, в течение которых считается, что клик был тапом
-
         const MENU_ELEMENTS = [UI.menuContent, UI.sortContent, UI.searchSuggestions];
         const TOGGLE_ELEMENTS = [UI.menuButton, UI.sortButton, UI.searchInput, UI.clearButton];
 
@@ -435,13 +431,16 @@
             MENU_ELEMENTS.forEach(menu => menu.classList.remove('show'));
         }
 
-        /** Переключает состояние меню, закрывая все остальные. */
+        /** Переключает состояние меню (открыть/закрыть), закрывая все остальные. */
         function toggleMenu(menuElement, e) {
+            // Остановка всплытия события, чтобы оно не достигло window.onclick
             e.stopPropagation(); 
             const isShowing = menuElement.classList.contains('show');
             
+            // Сначала закрываем все меню (кроме текущего, если оно уже открыто)
             closeAllMenus();
             
+            // Если оно было закрыто, открываем его
             if (!isShowing) {
                 menuElement.classList.add('show');
             }
@@ -454,29 +453,48 @@
             menuElement.classList.add('show');
         }
         
-        // Глобальный обработчик для закрытия меню при клике/тапе вне
+        /** * Глобальный обработчик для закрытия меню при клике/тапе вне.
+         * Доработан для корректной работы с мобильными событиями (синтетическим click).
+         */
         function handleGlobalInteraction(e) {
-            let target = e.target;
+            const target = e.target;
             
-            let isInsideActiveElement = false;
+            // ИСПРАВЛЕНИЕ 1: Если клик/тап произошел на самом поле ввода поиска,
+            // мы игнорируем его в глобальном обработчике. Локальные обработчики
+            // на поле ввода сами откроют/закроют меню, а это предотвратит
+            // немедленное закрытие из-за бага с синтетическими click-событиями на мобильных.
+            if (target === UI.searchInput) {
+                return;
+            }
             
-            // Проверка, является ли целью клика активатор ИЛИ открытое меню
-            for (const el of [...TOGGLE_ELEMENTS, ...MENU_ELEMENTS]) {
-                if (el && el.classList.contains('show') && el.contains(target)) {
-                    isInsideActiveElement = true;
-                    break;
+            // Проверка: был ли клик внутри открытого меню ИЛИ на его активаторе.
+            for (const menu of MENU_ELEMENTS) {
+                if (menu.classList.contains('show')) {
+                    // Case A: Клик внутри самого открытого меню (разрешаем, не закрываем).
+                    if (menu.contains(target)) {
+                        return;
+                    }
+                    // Case B: Клик на других активаторах, связанных с открытым меню (разрешаем, не закрываем).
+                    if ((menu === UI.sortContent && target === UI.sortButton) ||
+                        (menu === UI.menuContent && target === UI.menuButton)) {
+                        return;
+                    }
                 }
             }
-
-            // Проверка, что клик был не по активному фильтру (году)
-            if (target.classList.contains('filter-link') && target.classList.contains('active')) {
-                isInsideActiveElement = true;
-            }
-
-            if (!isInsideActiveElement) {
-                closeAllMenus();
-            }
+            
+            // Если мы дошли до сюда, клик был вне всех активных областей. Закрываем все.
+            closeAllMenus();
         }
+        
+        // Добавление глобальных слушателей
+        window.addEventListener('click', handleGlobalInteraction);
+        window.addEventListener('touchstart', handleGlobalInteraction);
+        
+        // Предотвращение всплытия событий клика/тапа из самих меню
+        MENU_ELEMENTS.forEach(menu => {
+            menu.addEventListener('click', e => e.stopPropagation());
+            menu.addEventListener('touchstart', e => e.stopPropagation());
+        });
         
         // --- ЛОГИКА СОРТИРОВКИ, ФИЛЬТРАЦИИ И ПОИСКА ---
 
@@ -607,10 +625,15 @@
                     localStorage.setItem(STORAGE_KEYS.SEARCH, state.search);
                     UI.clearButton.style.display = 'block';
                     renderAlbums();
-                    UI.searchSuggestions.classList.remove('show'); // Закрываем меню
+                    UI.searchSuggestions.classList.remove('show'); 
                 };
+                div.ontouchstart = div.onclick; // Обработка тапа
                 UI.searchSuggestions.appendChild(div);
             });
+            
+            // Обработчики поля поиска (toggleMenu)
+            UI.searchInput.addEventListener('click', (e) => { toggleMenu(UI.searchSuggestions, e); });
+            UI.searchInput.addEventListener('touchstart', (e) => { toggleMenu(UI.searchSuggestions, e); }, { passive: true });
         }
 
         // --- Инициализация Фильтров Годов ---
@@ -627,8 +650,9 @@
                     state.year = year;
                     localStorage.setItem(STORAGE_KEYS.YEAR, year);
                     renderAlbums();
-                    closeAllMenus(); // Закрываем все меню после применения фильтра
+                    closeAllMenus(); 
                 };
+                el.ontouchstart = el.onclick; // Обработка тапа
                 return el;
             };
 
@@ -679,11 +703,16 @@
             requestAnimationFrame(updateFiltersVisibility);
         }
 
-        // --- ЛОГИКА ПРОКРУТКИ ---
+        // --- ЛОГИКА ПРОКРУТКИ И КОЛЕСА МЫШИ ---
         function initScrollLogic() {
             let scrollTimeout;
             const scrollContainer = UI.grid;
 
+            // ИСПРАВЛЕНИЕ 2: Увеличен размер шага прокрутки для стрелок
+            const scrollAmount = 100; 
+            const pageAmount = scrollContainer.clientHeight * 0.9; 
+
+            // Показывает скроллбар на короткое время
             const showScroll = () => {
                 scrollContainer.classList.add('is-scrolling');
                 clearTimeout(scrollTimeout);
@@ -692,20 +721,24 @@
                 }, 1500);
             };
 
+            // Показываем скроллбар при скролле сетки
             scrollContainer.addEventListener('scroll', showScroll);
             
+            // Обработка колеса мыши для скроллинга сетки, даже если открыто меню
             document.addEventListener('wheel', (e) => {
                 let target = e.target;
                 
+                // 1. Проверяем, произошло ли вращение колеса над открытым меню
                 let isOverOpenMenu = MENU_ELEMENTS.some(menu => menu.classList.contains('show') && menu.contains(target));
                 
+                // 2. Если колесо вращается над открытым меню, мы позволяем браузеру прокручивать меню
                 if (isOverOpenMenu) {
                     return;
                 }
 
-                let isAnyMenuOpen = MENU_ELEMENTS.some(menu => menu.classList.contains('show'));
-                
-                if (isAnyMenuOpen || UI.header.contains(target) || scrollContainer.contains(target)) {
+                // 3. Если колесо вращается вне меню, но меню открыто (или мы находимся в области хедера/грида),
+                // прокручиваем сетку альбомов вручную, не закрывая меню.
+                if (UI.header.contains(target) || scrollContainer.contains(target) || MENU_ELEMENTS.some(menu => menu.classList.contains('show'))) {
                     scrollContainer.scrollTop += e.deltaY;
                     e.preventDefault(); 
                     showScroll(); 
@@ -713,17 +746,17 @@
                 
             }, { passive: false }); 
 
+            // Обработка скролла при движении мыши (имитация)
             document.addEventListener('mousemove', (e) => {
                 if (window.innerWidth - e.clientX < 20) {
                     showScroll();
                 }
             });
 
+            // Обработка прокрутки с клавиатуры
             window.addEventListener('keydown', (e) => {
                 if (document.activeElement === UI.searchInput) return;
 
-                const scrollAmount = 50; 
-                const pageAmount = scrollContainer.clientHeight * 0.9; 
                 let handled = false;
 
                 switch (e.key) {
@@ -772,51 +805,30 @@
                 handleSearchInput(e);
             });
 
-            // --- ЕДИНАЯ ЛОГИКА ОБРАБОТКИ КЛИКА/ТАПА ДЛЯ МЕНЮ ---
-
-            const createMenuToggleHandler = (menuElement) => {
-                return (e) => {
-                    if (e.type === 'touchstart') {
-                        // Запускаем toggle при touch и устанавливаем флаг
-                        toggleMenu(menuElement, e); 
-                        touchToggleActive = true;
-                        setTimeout(() => { touchToggleActive = false; }, TOUCH_TOGGLE_DURATION);
-                    } else if (e.type === 'click' && !touchToggleActive) {
-                        // Запускаем toggle при click, только если он не был синтезирован после touch
-                        toggleMenu(menuElement, e);
-                    }
-                };
-            };
-
-            // Обработчики для меню года
-            const menuToggleHandler = createMenuToggleHandler(UI.menuContent);
-            UI.menuButton.addEventListener('click', menuToggleHandler);
-            UI.menuButton.addEventListener('touchstart', menuToggleHandler, { passive: true });
-
-            // Обработчики для сортировки
-            const sortToggleHandler = createMenuToggleHandler(UI.sortContent);
-            UI.sortButton.addEventListener('click', sortToggleHandler);
-            UI.sortButton.addEventListener('touchstart', sortToggleHandler, { passive: true });
-
-            // Обработчики для поиска (теперь используют логику с флагом)
-            const searchToggleHandler = createMenuToggleHandler(UI.searchSuggestions);
-            UI.searchInput.addEventListener('click', searchToggleHandler);
-            UI.searchInput.addEventListener('touchstart', searchToggleHandler, { passive: true });
-
             // Обработчик кнопки очистки поиска (открывает меню предложений)
-            function handleClearAndOpen(e) {
-                e.stopPropagation();
+            UI.clearButton.addEventListener('click', (e) => {
                 UI.searchInput.value = '';
                 handleSearchInput({ target: UI.searchInput });
                 
                 openMenu(UI.searchSuggestions, e); 
-                UI.searchInput.focus();
-            }
-            UI.clearButton.addEventListener('click', handleClearAndOpen);
-            UI.clearButton.addEventListener('touchstart', handleClearAndOpen, { passive: true });
+                UI.searchInput.focus(); 
+            });
+            UI.clearButton.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Предотвращаем двойной клик на мобильных
+                UI.clearButton.click();
+            }, { passive: false });
 
 
-            // Обработчики пунктов меню сортировки (применяют сортировку и закрывают меню)
+            // Обработчик кнопки сортировки (toggleMenu)
+            UI.sortButton.addEventListener('click', (e) => {
+                toggleMenu(UI.sortContent, e);
+            });
+            UI.sortButton.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Предотвращаем двойной клик на мобильных
+                UI.sortButton.click();
+            }, { passive: false });
+
+            // Обработчики пунктов меню сортировки
             document.querySelectorAll('.sort-content-item').forEach(item => {
                 item.onclick = (e) => {
                     e.stopPropagation(); 
@@ -825,9 +837,19 @@
                     localStorage.setItem(STORAGE_KEYS.SORT, newSort);
                     updateSortButtonUI();
                     renderAlbums();
-                    UI.sortContent.classList.remove('show'); // Закрываем меню
+                    UI.sortContent.classList.remove('show'); 
                 };
+                item.ontouchstart = item.onclick; // Обработка тапа
             });
+
+            // Обработчик кнопки дополнительного меню фильтров (toggleMenu)
+            UI.menuButton.onclick = (e) => {
+                toggleMenu(UI.menuContent, e);
+            };
+            UI.menuButton.ontouchstart = (e) => {
+                e.preventDefault(); // Предотвращаем двойной клик на мобильных
+                UI.menuButton.click();
+            };
 
             // Инициализация всех компонентов
             initYearFilters();
@@ -862,16 +884,6 @@
                 applyTheme(newThemeIsDark);
                 localStorage.setItem(STORAGE_KEYS.THEME, newThemeIsDark ? 'dark' : 'light');
             };
-            
-            // Добавление глобальных слушателей для закрытия
-            window.addEventListener('click', handleGlobalInteraction);
-            window.addEventListener('touchstart', handleGlobalInteraction);
-            
-            // Предотвращение всплытия событий клика/тапа из самих меню
-            MENU_ELEMENTS.forEach(menu => {
-                menu.addEventListener('click', e => e.stopPropagation());
-                menu.addEventListener('touchstart', e => e.stopPropagation());
-            });
         });
     </script>
 </body>
