@@ -145,7 +145,6 @@
         .menu-content.show, .sort-content.show { display: block; }
 
         /* Общие стили для скроллбаров в меню */
-        /* ДОБАВЛЕНО: .search-suggestions в селектор ниже */
         .menu-content, .sort-content, .search-suggestions {
             max-height: 340px; overflow-y: auto;
             scrollbar-width: thin;
@@ -672,16 +671,13 @@
                 UI.searchSuggestions.appendChild(div);
             });
             
-            // Обработчик клика: использует toggleMenu для открытия/закрытия меню поиска,
-            // обеспечивая корректное поведение "свернуть/развернуть" при повторном клике.
+            // Обработчик клика: теперь просто открывает меню (закрывая другие)
+            // Повторный клик НЕ закрывает меню (чтобы не мешать навигации по тексту)
             UI.searchInput.addEventListener('click', (e) => {
-                toggleMenu(UI.searchSuggestions, e);
+                openMenu(UI.searchSuggestions, e);
             });
             
-            // Обработчик для мобильных устройств
-            UI.searchInput.addEventListener('touchstart', (e) => {
-                toggleMenu(UI.searchSuggestions, e);
-            }, { passive: true });
+            // Удален обработчик touchstart, который вызывал переключение (toggle)
 
             // Предотвращение закрытия меню при взаимодействии внутри него
             ['click', 'touchstart', 'touchmove'].forEach(evt => {
