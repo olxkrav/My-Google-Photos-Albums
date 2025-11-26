@@ -59,7 +59,7 @@
             --color-scrollbar-hover: var(--color-scrollbar-thumb-hover-dark);
         }
 
-        body { /* Light Theme Defaults */
+        body { /* Светлая тема по умолчанию */
             --color-text: var(--color-text-light);
             --color-text-on-surface: #202124;
             --color-background: var(--color-background-light);
@@ -77,12 +77,12 @@
         /* === Общие Стили === */
         * { box-sizing: border-box; }
         
-        /* Убираем скролл на body, чтобы скроллился только main */
+        /* Основные стили страницы и шрифты */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Важно: отключаем прокрутку страницы целиком */
+            overflow: hidden; 
             font-family: 'Roboto', Arial, sans-serif;
             background-color: var(--color-background);
             color: var(--color-text-on-surface);
@@ -144,45 +144,34 @@
         }
         .menu-content.show, .sort-content.show { display: block; }
 
-        .menu-content {
-            left: 0; max-height: calc(16 * 1.4em + 20px); overflow-y: auto;
+        /* Общие стили для скроллбаров в меню */
+        .menu-content, .sort-content {
+            max-height: 340px; overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: transparent transparent; 
             transition: scrollbar-color 0.3s;
         }
-        
-        .menu-content:hover {
+        .menu-content:hover, .sort-content:hover, .search-suggestions:hover {
             scrollbar-color: var(--color-scrollbar) transparent;
         }
-
-        .menu-content::-webkit-scrollbar {
-            width: 12px;
+        .menu-content::-webkit-scrollbar, .sort-content::-webkit-scrollbar, .search-suggestions::-webkit-scrollbar {
+            width: 12px; background-color: transparent;
+        }
+        .menu-content::-webkit-scrollbar-track, .sort-content::-webkit-scrollbar-track, .search-suggestions::-webkit-scrollbar-track {
             background-color: transparent;
         }
-
-        .menu-content::-webkit-scrollbar-track {
-            background-color: transparent;
+        .menu-content::-webkit-scrollbar-thumb, .sort-content::-webkit-scrollbar-thumb, .search-suggestions::-webkit-scrollbar-thumb {
+            background-color: transparent; border-radius: 6px; border: 3px solid transparent; background-clip: content-box; transition: background-color 0.3s;
         }
-
-        .menu-content::-webkit-scrollbar-thumb {
-            background-color: transparent; 
-            border-radius: 6px;
-            border: 3px solid transparent;
-            background-clip: content-box;
-            transition: background-color 0.3s;
-        }
-
-        .menu-content:hover::-webkit-scrollbar-thumb {
+        .menu-content:hover::-webkit-scrollbar-thumb, .sort-content:hover::-webkit-scrollbar-thumb, .search-suggestions:hover::-webkit-scrollbar-thumb {
             background-color: var(--color-scrollbar);
         }
-
-        .menu-content::-webkit-scrollbar-thumb:hover {
+        .menu-content::-webkit-scrollbar-thumb:hover, .sort-content::-webkit-scrollbar-thumb:hover, .search-suggestions::-webkit-scrollbar-thumb:hover {
             background-color: var(--color-scrollbar-hover);
         }
         
         .sort-content {
             left: 50%; transform: translateX(-50%);
-            max-height: calc(16 * 1.4em + 20px); overflow-y: auto;
             width: 200px;
         }
 
@@ -262,24 +251,8 @@
             padding: 0;
             max-height: 340px;
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: transparent transparent; 
-            transition: scrollbar-color 0.3s;
         }
         .search-suggestions.show { display: block; }
-        .search-suggestions:hover { scrollbar-color: var(--color-scrollbar) transparent; }
-        
-        .search-suggestions::-webkit-scrollbar { width: 12px; background-color: transparent; }
-        .search-suggestions::-webkit-scrollbar-track { background-color: transparent; }
-        .search-suggestions::-webkit-scrollbar-thumb {
-            background-color: transparent;
-            border-radius: 6px;
-            border: 3px solid transparent;
-            background-clip: content-box;
-            transition: background-color 0.3s;
-        }
-        .search-suggestions:hover::-webkit-scrollbar-thumb { background-color: var(--color-scrollbar); }
-        .search-suggestions::-webkit-scrollbar-thumb:hover { background-color: var(--color-scrollbar-hover); }
 
         .search-suggestion-item {
             display: block; padding: 10px 12px;
@@ -288,7 +261,7 @@
         }
         .search-suggestion-item:hover { background-color: var(--color-surface); }
 
-        /* --- Theme Button & Profile --- */
+        /* --- Кнопка Темы и Профиль --- */
         .theme-button {
             margin-right: var(--header-item-spacing); width: 40px; height: 40px;
             display: flex; align-items: center; justify-content: center;
@@ -321,6 +294,7 @@
             transition: scrollbar-color 0.3s;
         }
 
+        /* Логика отображения скроллбара при прокрутке */
         .album-grid.is-scrolling { scrollbar-color: var(--color-scrollbar) transparent; }
 
         .album-grid::-webkit-scrollbar { width: 12px; background-color: transparent; }
@@ -369,7 +343,7 @@
             -webkit-box-orient: vertical; overflow: hidden; max-height: calc(1.4em * 2); 
         }
 
-        /* === Mobile Styles === */
+        /* === Адаптивные Стили === */
         @media (max-width: 750px) {
             .header { padding: 0 10px; }
             .logo-text { display: none; }
@@ -432,7 +406,7 @@
     <script src="albums.js"></script>
 
     <script>
-        // --- ЛОКАЛИЗАЦИЯ ---
+        // --- ЛОКАЛИЗАЦИЯ (ПЕРЕВОДЫ) ---
         const TRANSLATIONS = {
             'title': { ru: 'Мои альбомы Google Фото', uk: 'Мої альбоми Google Фото', en: 'My Google Photos albums' },
             'logo_text': { ru: 'Google Фото', uk: 'Google Фото', en: 'Google Photos' },
@@ -444,7 +418,7 @@
             'not_found': { ru: 'Не найдено...', uk: 'Не знайдено...', en: 'Not found...' }
         };
 
-        // --- ДАННЫЕ ДЛЯ МЕНЮ ПРЕДЛОЖЕНИЙ ---
+        // --- ДАННЫЕ ДЛЯ МЕНЮ ПРЕДЛОЖЕНИЙ ПОИСКА ---
         const SEARCH_SUGGESTIONS_DATA = [
             { ru: 'арсен', uk: 'арсен', en: 'arsenii' },
             { ru: 'матве', uk: 'матві', en: 'matviy' },
@@ -459,6 +433,7 @@
             { ru: 'музей', uk: 'музей', en: 'museum' }
         ];
 
+        // Определяет язык пользователя и загружает соответствующие строки локализации
         function getLocaleStrings() {
             const userLang = (navigator.language || navigator.userLanguage).toLowerCase();
             let lang = 'en'; 
@@ -480,7 +455,7 @@
 
         const STRINGS = getLocaleStrings();
 
-        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
+        // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ и СОСТОЯНИЕ ---
 
         const STORAGE_KEYS = {
             THEME: 'album_theme',
@@ -513,7 +488,9 @@
             search: ''
         };
         
-        // --- ЛОГИКА ВЗАИМНОГО ЗАКРЫТИЯ МЕНЮ ---
+        // --- ЛОГИКА МЕНЮ ---
+        
+        /** Закрывает все выпадающие меню, кроме указанного (или всех, если не указано) */
         function closeAllMenus(excludeElement = null) {
             const menus = [UI.menuContent, UI.sortContent, UI.searchSuggestions];
             menus.forEach(menu => {
@@ -523,10 +500,7 @@
             });
         }
 
-        /**
-         * Корректно сворачивает/разворачивает текущее меню
-         * и при этом закрывает все остальные.
-         */
+        /** Переключает состояние меню (открыть/закрыть), закрывая при этом все остальные. */
         function toggleMenu(menuElement, e) {
             e.stopPropagation();
             const isShowing = menuElement.classList.contains('show');
@@ -536,22 +510,22 @@
             
             // 2. Свернуть/развернуть текущее меню
             if (isShowing) {
-                // Если меню было открыто, закрыть его
                 menuElement.classList.remove('show');
             } else {
-                // Если меню было закрыто, открыть его
                 menuElement.classList.add('show');
             }
         }
         
+        /** Принудительно открывает меню, закрывая все остальные. Используется, например, после очистки поиска. */
         function openMenu(menuElement, e) {
             e.stopPropagation();
             closeAllMenus(menuElement);
             menuElement.classList.add('show');
         }
-        // -------------------------------------------------------------------
-
-        // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
+        
+        // --- РЕНДЕРИНГ И СОРТИРОВКА ---
+        
+        /** Проверяет, был ли альбом добавлен в течение последней недели. */
         function isRecentlyAdded(addedDateStr) {
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -559,6 +533,7 @@
             return addedDate > oneWeekAgo;
         }
 
+        /** Создает HTML-карточку альбома. */
         function createAlbumCard(album) {
             const card = document.createElement('div');
             card.className = 'album-card';
@@ -581,33 +556,37 @@
             return card;
         }
 
+        /** Применяет текущую сортировку к массиву альбомов. */
         function getSortedAlbums() {
             let sorted = [...albums];
-            const compareDates = (a, b) => new Date(a).getTime() - new Date(b).getTime();
             
             switch (state.sort) {
                 case 'newest':
-                    // Учтено пользовательское требование: сортировка от новых альбомов к старым
+                    // Сортировка от новых альбомов к старым (по дате альбома)
                     sorted.sort((a, b) => b.date.localeCompare(a.date));
                     break;
                 case 'oldest':
                     sorted.sort((a, b) => a.date.localeCompare(b.date));
                     break;
                 case 'added':
+                    // Сортировка по дате добавления
                     sorted.sort((a, b) => b.addedDate.localeCompare(a.addedDate));
                     break;
             }
             return sorted;
         }
 
+        /** Фильтрует и отрисовывает альбомы в сетке. */
         function renderAlbums() {
             UI.grid.innerHTML = '';
             let result = getSortedAlbums();
 
+            // Фильтрация по году
             if (state.year !== 'all') {
                 result = result.filter(a => a.year === state.year);
             }
 
+            // Фильтрация по поисковому запросу
             if (state.search) {
                 const query = state.search.toLowerCase();
                 const currentLang = STRINGS.lang;
@@ -627,6 +606,7 @@
             updateActiveClasses();
         }
 
+        /** Обновляет активные классы для фильтров и сортировки. */
         function updateActiveClasses() {
             document.querySelectorAll('.filter-link, .menu-content-item').forEach(el => {
                 el.classList.toggle('active', el.getAttribute('data-year') === state.year);
@@ -636,6 +616,7 @@
             });
         }
 
+        /** Обновляет иконку и текст на кнопке сортировки. */
         function updateSortButtonUI() {
             const map = {
                 newest: { icon: 'arrow_downward', label: STRINGS.newest_sort },
@@ -647,6 +628,7 @@
             UI.sortLabel.textContent = current.label;
         }
 
+        /** Функция задержки (debounce) для обработки ввода. */
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -655,6 +637,7 @@
             };
         }
 
+        /** Обработчик ввода в поле поиска с задержкой. */
         const handleSearchInput = debounce((e) => {
             state.search = e.target.value.trim();
             localStorage.setItem(STORAGE_KEYS.SEARCH, state.search);
@@ -662,17 +645,19 @@
             renderAlbums();
         }, 300);
 
-        // --- ЛОГИКА ПРЕДЛОЖЕНИЙ ПОИСКА ---
+        // --- ЛОГИКА МЕНЮ ПРЕДЛОЖЕНИЙ ПОИСКА ---
         function initSearchSuggestions() {
             UI.searchSuggestions.innerHTML = '';
             const currentLang = STRINGS.lang;
 
+            // Генерация элементов предложений из данных
             SEARCH_SUGGESTIONS_DATA.forEach(item => {
                 const text = item[currentLang] || item['en'];
                 const div = document.createElement('div');
                 div.className = 'search-suggestion-item';
                 div.textContent = text;
                 
+                // При клике на предложение - заполняем поле, ищем и закрываем меню
                 div.onmousedown = (e) => {
                     e.preventDefault(); 
                     UI.searchInput.value = text;
@@ -686,22 +671,18 @@
                 UI.searchSuggestions.appendChild(div);
             });
             
-            // УДАЛЕНО: Слушатель 'focus' удален, чтобы устранить конфликт с 'click'
-            // UI.searchInput.addEventListener('focus', (e) => {
-            //     openMenu(UI.searchSuggestions, e);
-            // });
-
-            // ИЗМЕНЕНО: Используем toggleMenu для сворачивания/разворачивания при клике/тапе
-            // Теперь это единственный обработчик, управляющий видимостью меню при клике на поле.
+            // Обработчик клика: использует toggleMenu для открытия/закрытия меню поиска,
+            // обеспечивая корректное поведение "свернуть/развернуть" при повторном клике.
             UI.searchInput.addEventListener('click', (e) => {
                 toggleMenu(UI.searchSuggestions, e);
             });
             
+            // Обработчик для мобильных устройств
             UI.searchInput.addEventListener('touchstart', (e) => {
                 toggleMenu(UI.searchSuggestions, e);
             }, { passive: true });
 
-            // Запрет закрытия меню при взаимодействии внутри
+            // Предотвращение закрытия меню при взаимодействии внутри него
             ['click', 'touchstart', 'touchmove'].forEach(evt => {
                 UI.searchSuggestions.addEventListener(evt, (e) => {
                     e.stopPropagation(); 
@@ -709,7 +690,7 @@
             });
         }
 
-        // --- Инициализация Фильтров ---
+        // --- Инициализация Фильтров Годов ---
         function initYearFilters() {
             const years = [...new Set(albums.map(a => a.year))].sort((a, b) => b - a);
 
@@ -723,15 +704,17 @@
                     state.year = year;
                     localStorage.setItem(STORAGE_KEYS.YEAR, year);
                     renderAlbums();
-                    // ЗАКРЫТИЕ МЕНЮ: Закрыть все меню при клике/тапе на фильтр года
+                    // Закрываем все меню при выборе фильтра
                     closeAllMenus();
                 };
                 return el;
             };
 
+            // Создание основных кнопок фильтров
             UI.filtersContainer.appendChild(createLink(STRINGS.all_filter, 'all', false));
             years.forEach(y => UI.filtersContainer.appendChild(createLink(y, y, false)));
 
+            // Логика адаптивного скрытия/показа фильтров в дополнительном меню
             function updateFiltersVisibility() {
                 UI.menuDropdown.style.display = 'none';
                 const allElements = Array.from(UI.filtersContainer.children);
@@ -775,11 +758,12 @@
             requestAnimationFrame(updateFiltersVisibility);
         }
 
-        // --- SCROLLBAR LOGIC ---
+        // --- ЛОГИКА СОРТИРОВКИ И СКРОЛЛБАРА ---
         function initScrollLogic() {
             let scrollTimeout;
             const scrollContainer = UI.grid;
 
+            // Показывает скроллбар на короткое время
             const showScroll = () => {
                 scrollContainer.classList.add('is-scrolling');
                 clearTimeout(scrollTimeout);
@@ -788,17 +772,21 @@
                 }, 1500);
             };
 
+            // Показываем скроллбар при наведении на край экрана (имитация)
             document.addEventListener('mousemove', (e) => {
                 if (window.innerWidth - e.clientX < 20) {
                     showScroll();
                 }
             });
 
+            // Показываем скроллбар при скролле
             scrollContainer.addEventListener('scroll', () => {
                 showScroll();
             });
             
+            // Обработка прокрутки колесом мыши над шапкой
             UI.header.addEventListener('wheel', (e) => {
+                // Если какое-то меню открыто, не перехватываем скролл
                 if (UI.menuContent.classList.contains('show') || 
                     UI.sortContent.classList.contains('show') ||
                     UI.searchSuggestions.classList.contains('show')) { 
@@ -809,6 +797,7 @@
                 showScroll();
             }, { passive: true });
 
+            // Обработка прокрутки с клавиатуры
             window.addEventListener('keydown', (e) => {
                 if (document.activeElement === UI.searchInput) return;
 
@@ -858,8 +847,9 @@
             });
         }
 
-        // --- Инициализация ---
+        // --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ---
         document.addEventListener('DOMContentLoaded', () => {
+            // Применение локализации
             document.title = STRINGS.title;
             UI.logoText.textContent = STRINGS.logo_text;
             UI.searchInput.placeholder = STRINGS.search_placeholder;
@@ -868,6 +858,7 @@
             document.querySelector('.sort-content-item[data-sort="oldest"]').querySelector('span[data-sort-label]').textContent = STRINGS.oldest_sort;
             document.querySelector('.sort-content-item[data-sort="added"]').querySelector('span[data-sort-label]').textContent = STRINGS.added_sort;
 
+            // Восстановление состояния из localStorage
             state.year = localStorage.getItem(STORAGE_KEYS.YEAR) || 'all';
             state.sort = localStorage.getItem(STORAGE_KEYS.SORT) || 'newest';
             state.search = localStorage.getItem(STORAGE_KEYS.SEARCH) || '';
@@ -882,21 +873,22 @@
                 handleSearchInput(e);
             });
 
-            // Нажатие кнопки очистки вызывает меню предложений
+            // Обработчик кнопки очистки поиска
             UI.clearButton.addEventListener('click', (e) => {
                 UI.searchInput.value = '';
                 handleSearchInput({ target: UI.searchInput });
                 
-                // Открываем меню предложений
+                // Открываем меню предложений и устанавливаем фокус
                 openMenu(UI.searchSuggestions, e); 
                 UI.searchInput.focus(); 
             });
 
-            // ИСПОЛЬЗУЕТ toggleMenu (работает корректно)
+            // Обработчик кнопки сортировки
             UI.sortButton.addEventListener('click', (e) => {
                 toggleMenu(UI.sortContent, e);
             });
 
+            // Обработчики пунктов меню сортировки
             document.querySelectorAll('.sort-content-item').forEach(item => {
                 item.onclick = (e) => {
                     e.stopPropagation();
@@ -909,11 +901,12 @@
                 };
             });
 
-            // ИСПОЛЬЗУЕТ toggleMenu (работает корректно)
+            // Обработчик кнопки дополнительного меню фильтров
             UI.menuButton.onclick = (e) => {
                 toggleMenu(UI.menuContent, e);
             };
 
+            // Инициализация всех компонентов
             initYearFilters();
             renderAlbums();
             initScrollLogic();
@@ -940,6 +933,7 @@
                 }
             });
 
+            // Переключение темы при клике
             UI.themeToggle.onclick = () => {
                 const isCurrentDark = document.body.classList.contains('dark-theme');
                 const newThemeIsDark = !isCurrentDark;
@@ -947,7 +941,7 @@
                 localStorage.setItem(STORAGE_KEYS.THEME, newThemeIsDark ? 'dark' : 'light');
             };
 
-            // ЗАКРЫТИЕ МЕНЮ ПРИ КЛИКЕ ВНЕ
+            // Закрытие всех меню при клике в любом месте страницы
             window.addEventListener('click', () => {
                 closeAllMenus();
             });
