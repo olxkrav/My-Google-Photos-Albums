@@ -426,7 +426,8 @@
             { ru: 'авто', uk: 'авто', en: 'car' },
             { ru: 'парк', uk: 'парк', en: 'park' },
             { ru: 'концерт', uk: 'концерт', en: 'concert' },
-            { ru: 'музей', uk: 'музей', en: 'museum' }
+            { ru: 'музей', uk: 'музей', en: 'museum' },
+            { ru: 'монреал', uk: 'монреал', en: 'montreal' }
         ];
 
         // Определяет язык пользователя и загружает соответствующие строки локализации
@@ -778,7 +779,7 @@
             // --- ОБРАБОТКА КОЛЕСА МЫШИ НА ШАПКЕ ---
             UI.header.addEventListener('wheel', (e) => {
                 // Прокрутка главного контейнера альбомов с использованием инерции
-                scrollContainer.scrollTop += e.deltaY * 5;
+                scrollContainer.scrollTop += e.deltaY * 3;
                 showScroll();
                 // Предотвращаем прокрутку родительского элемента (окна)
                 e.preventDefault(); 
