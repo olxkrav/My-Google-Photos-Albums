@@ -144,31 +144,32 @@
         }
         .menu-content.show, .sort-content.show { display: block; }
 
-        /* Общие стили для скроллбаров в меню */
-        .menu-content, .sort-content, .search-suggestions {
+        /* === УНИВЕРСАЛЬНЫЙ СТИЛЬ СКРОЛЛБАРА ДЛЯ МЕНЮ (П. 3.1) === */
+        .dropdown-scrollable {
             max-height: 340px; overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: transparent transparent; 
             transition: scrollbar-color 0.3s;
         }
-        .menu-content:hover, .sort-content:hover, .search-suggestions:hover {
+        .dropdown-scrollable:hover {
             scrollbar-color: var(--color-scrollbar) transparent;
         }
-        .menu-content::-webkit-scrollbar, .sort-content::-webkit-scrollbar, .search-suggestions::-webkit-scrollbar {
+        .dropdown-scrollable::-webkit-scrollbar {
             width: 12px; background-color: transparent;
         }
-        .menu-content::-webkit-scrollbar-track, .sort-content::-webkit-scrollbar-track, .search-suggestions::-webkit-scrollbar-track {
+        .dropdown-scrollable::-webkit-scrollbar-track {
             background-color: transparent;
         }
-        .menu-content::-webkit-scrollbar-thumb, .sort-content::-webkit-scrollbar-thumb, .search-suggestions::-webkit-scrollbar-thumb {
+        .dropdown-scrollable::-webkit-scrollbar-thumb {
             background-color: transparent; border-radius: 6px; border: 3px solid transparent; background-clip: content-box; transition: background-color 0.3s;
         }
-        .menu-content:hover::-webkit-scrollbar-thumb, .sort-content:hover::-webkit-scrollbar-thumb, .search-suggestions:hover::-webkit-scrollbar-thumb {
+        .dropdown-scrollable:hover::-webkit-scrollbar-thumb {
             background-color: var(--color-scrollbar);
         }
-        .menu-content::-webkit-scrollbar-thumb:hover, .sort-content::-webkit-scrollbar-thumb:hover, .search-suggestions::-webkit-scrollbar-thumb:hover {
+        .dropdown-scrollable::-webkit-scrollbar-thumb:hover {
             background-color: var(--color-scrollbar-hover);
         }
+        /* ======================================================= */
         
         .sort-content {
             left: 50%; transform: translateX(-50%);
@@ -249,8 +250,6 @@
             border-radius: 8px;
             z-index: 100;
             padding: 0;
-            max-height: 340px;
-            overflow-y: auto;
         }
         .search-suggestions.show { display: block; }
 
@@ -374,16 +373,14 @@
         
         <div class="menu-dropdown">
             <span class="material-icons menu-button" id="menu-button">menu</span>
-            <div class="menu-content" id="menu-content"></div>
-        </div>
+            <div class="menu-content dropdown-scrollable" id="menu-content"></div> </div>
 
         <div class="sort-dropdown">
             <div class="sort-button" id="sort-button">
                 <span class="material-icons sort-button-icon" id="sort-icon">arrow_downward</span>
                 <span id="sort-label" class="sort-button-text"></span>
             </div>
-            <div class="sort-content" id="sort-content">
-                <div class="sort-content-item" data-sort="newest"><span class="material-icons">arrow_downward</span><span data-sort-label="newest"></span></div>
+            <div class="sort-content dropdown-scrollable" id="sort-content"> <div class="sort-content-item" data-sort="newest"><span class="material-icons">arrow_downward</span><span data-sort-label="newest"></span></div>
                 <div class="sort-content-item" data-sort="oldest"><span class="material-icons">arrow_upward</span><span data-sort-label="oldest"></span></div>
                 <div class="sort-content-item" data-sort="added"><span class="material-icons">notifications</span><span data-sort-label="added"></span></div>
             </div>
@@ -393,8 +390,7 @@
             <span class="material-icons search-icon" id="search-icon-small">search</span>
             <input type="text" id="search-input" class="search-input" placeholder="">
             <span class="material-icons clear-button" id="clear-search-button">close</span>
-            <div class="search-suggestions" id="search-suggestions"></div>
-        </div>
+            <div class="search-suggestions dropdown-scrollable" id="search-suggestions"></div> </div>
 
         <span class="material-icons theme-button" id="theme-toggle">nightlight_round</span>
 
@@ -781,11 +777,8 @@
             
             // --- ОБРАБОТКА КОЛЕСА МЫШИ НА ШАПКЕ ---
             UI.header.addEventListener('wheel', (e) => {
-                // МЫ УБРАЛИ БЛОКИРОВКУ, КОТОРАЯ БЫЛА ЗДЕСЬ РАНЬШЕ
-                // Теперь прокрутка альбомов работает всегда, когда мышь над шапкой.
-                
                 // Прокрутка главного контейнера альбомов с использованием инерции
-                scrollContainer.scrollTop += e.deltaY * 3;
+                scrollContainer.scrollTop += e.deltaY * 5;
                 showScroll();
                 // Предотвращаем прокрутку родительского элемента (окна)
                 e.preventDefault(); 
@@ -954,4 +947,3 @@
     </script>
 </body>
 </html>
-
