@@ -672,11 +672,10 @@
                 UI.searchSuggestions.appendChild(div);
             });
             
-            // *** ИЗМЕНЕНИЕ: Используем toggleMenu вместо openMenu для переключения состояния меню подсказок ***
+            // Используем toggleMenu вместо openMenu для переключения состояния меню подсказок
             UI.searchInput.addEventListener('click', (e) => {
-                toggleMenu(UI.searchSuggestions, e); // <-- Используем toggleMenu
+                toggleMenu(UI.searchSuggestions, e); 
             });
-            // **********************************************************************************************
             
             // Предотвращение закрытия меню при взаимодействии внутри него
             ['click', 'touchstart', 'touchmove'].forEach(evt => {
@@ -780,25 +779,21 @@
                 showScroll();
             });
             
-            // --- ИЗМЕНЕНИЕ 1: Обработка прокрутки колесом мыши над шапкой (теперь без проверки открытых меню)
+            // --- ОБРАБОТКА КОЛЕСА МЫШИ НА ШАПКЕ ---
             UI.header.addEventListener('wheel', (e) => {
-                // Если открыто какое-либо меню (кроме поиска, который обрабатывается отдельно), 
-                // предотвращаем прокрутку главного контента.
-                if (UI.menuContent.classList.contains('show') || UI.sortContent.classList.contains('show')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return;
-                }
+                // МЫ УБРАЛИ БЛОКИРОВКУ, КОТОРАЯ БЫЛА ЗДЕСЬ РАНЬШЕ
+                // Теперь прокрутка альбомов работает всегда, когда мышь над шапкой.
                 
                 // Прокрутка главного контейнера альбомов с использованием инерции
                 scrollContainer.scrollTop += e.deltaY * 5;
                 showScroll();
-                // Предотвращаем прокрутку родительского элемента (окна), что обеспечивает системную инерцию
+                // Предотвращаем прокрутку родительского элемента (окна)
                 e.preventDefault(); 
-            }, { passive: false }); // passive: false для e.preventDefault()
+            }, { passive: false }); 
             
-            // --- ИЗМЕНЕНИЕ 2: Блокировка прокрутки альбомов при прокрутке меню
-            // Блокируем всплытие события wheel, чтобы прокрутка оставалась внутри меню
+            // --- Блокировка прокрутки альбомов при прокрутке ВНУТРИ меню ---
+            // stopPropagation предотвращает всплытие события до UI.header, 
+            // поэтому код выше не сработает, и прокручиваться будет само меню.
             [UI.menuContent, UI.sortContent, UI.searchSuggestions].forEach(menu => {
                 if (menu) {
                     menu.addEventListener('wheel', (e) => {
