@@ -409,12 +409,12 @@
             'all_filter': { ru: 'Все', uk: 'Всі', en: 'All' },
             'newest_sort': { ru: 'Самые новые', uk: 'Найновіші', en: 'Newest' },
             'oldest_sort': { ru: 'Самые старые', uk: 'Найстаріші', en: 'Oldest' },
-            'added_sort': { ru: 'Недавно добавленные', uk: 'Нещодавно додані', en: 'Rescently added' },
+            'added_sort': { ru: 'Обновления', uk: 'Оновлення', en: 'Updates' },
             'search_placeholder': { ru: 'Поиск...', uk: 'Пошук...', en: 'Search...' },
             'not_found': { ru: 'Не найдено...', uk: 'Не знайдено...', en: 'Not found...' }
         };
 
-        // --- ДАННЫЕ ДЛЯ МЕНЮ ПРЕДЛОЖЕНИЙ ПОИСКА (СТАТИЧЕСКИЕ) ---
+        // --- ДАННЫЕ ДЛЯ МЕНЮ ПРЕДЛОЖЕНИЙ ПОИСКА ---
         const SEARCH_SUGGESTIONS_DATA = [
 	    { ru: 'арсен', uk: 'арсен', en: 'Aresnii' },
             { ru: 'матв', uk: 'матв', en: 'Matviy' },
@@ -640,66 +640,27 @@
             };
         }
 
-        /** Обработчик фильтрации сетки с задержкой. */
-        const handleSearchInput = debounce((val) => {
-            state.search = val.trim();
+        /** Обработчик ввода в поле поиска с задержкой. */
+        const handleSearchInput = debounce((e) => {
+            state.search = e.target.value.trim();
             localStorage.setItem(STORAGE_KEYS.SEARCH, state.search);
             UI.clearButton.style.display = state.search ? 'block' : 'none';
             renderAlbums();
         }, 300);
 
         // --- ЛОГИКА МЕНЮ ПРЕДЛОЖЕНИЙ ПОИСКА ---
-
-        /** * Извлекает слова из названий альбомов, начинающиеся с query.
-         * Используется для динамических подсказок.
-         */
-        function getMatchingWordsFromAlbums(query) {
-            if (!query) return [];
-            
-            const currentLang = STRINGS.lang;
-            const queryLower = query.toLowerCase();
-            const matches = new Set(); // Используем Set для уникальности
-
-            albums.forEach(album => {
-                const title = (album.title[currentLang] || album.title['ru'] || '').toLowerCase();
-                // Разбиваем название на слова по пробелам и знакам препинания
-                const words = title.split(/[ \-.,;!?()]+/);
-                
-                words.forEach(word => {
-                    // Если слово начинается с введенного текста
-                    if (word.startsWith(queryLower)) {
-                        matches.add(word);
-                    }
-                });
-            });
-
-            // Превращаем в массив, сортируем и берем первые 15
-            return Array.from(matches).sort().slice(0, 15);
-        }
-
-        /** * Возвращает массив строк статических (сохраненных) подсказок для текущего языка.
-         */
-        function getStaticSuggestionsList() {
-             const currentLang = STRINGS.lang;
-             return SEARCH_SUGGESTIONS_DATA.map(item => item[currentLang] || item['en']);
-        }
-
-        /** * Рендерит список строк в меню предложений.
-         */
-        function renderSearchSuggestions(suggestionsList) {
+        function initSearchSuggestions() {
             UI.searchSuggestions.innerHTML = '';
-            
-            if (suggestionsList.length === 0) {
-                UI.searchSuggestions.classList.remove('show');
-                return;
-            }
+            const currentLang = STRINGS.lang;
 
-            suggestionsList.forEach(text => {
+            // Генерация элементов предложений из данных
+            SEARCH_SUGGESTIONS_DATA.forEach(item => {
+                const text = item[currentLang] || item['en'];
                 const div = document.createElement('div');
                 div.className = 'search-suggestion-item';
                 div.textContent = text;
                 
-                // При клике на предложение
+                // При клике на предложение - заполняем поле, ищем и закрываем меню
                 div.onmousedown = (e) => {
                     e.preventDefault(); 
                     UI.searchInput.value = text;
@@ -712,52 +673,10 @@
                 };
                 UI.searchSuggestions.appendChild(div);
             });
-        }
-
-        /** * Инициализация событий поиска.
-         */
-        function initSearchLogic() {
-            // Начальная отрисовка статических подсказок (но пока скрытых)
-            renderSearchSuggestions(getStaticSuggestionsList());
-
+            
             // Используем toggleMenu вместо openMenu для переключения состояния меню подсказок
             UI.searchInput.addEventListener('click', (e) => {
-                // Если поле пустое - показываем статику
-                if (!UI.searchInput.value.trim()) {
-                     renderSearchSuggestions(getStaticSuggestionsList());
-                     toggleMenu(UI.searchSuggestions, e); 
-                } else {
-                    // Если там есть текст - показываем динамику (если есть совпадения)
-                    const matches = getMatchingWordsFromAlbums(UI.searchInput.value.trim());
-                    if (matches.length > 0) {
-                        renderSearchSuggestions(matches);
-                        openMenu(UI.searchSuggestions, e);
-                    }
-                }
-            });
-
-            // Основной обработчик ввода
-            UI.searchInput.addEventListener('input', (e) => {
-                const val = e.target.value.trim();
-
-                if (val.length > 0) {
-                    // 1. Генерируем динамические подсказки из слов в названиях
-                    const matches = getMatchingWordsFromAlbums(val);
-                    renderSearchSuggestions(matches);
-                    
-                    if (matches.length > 0) {
-                        UI.searchSuggestions.classList.add('show');
-                    } else {
-                        UI.searchSuggestions.classList.remove('show');
-                    }
-                } else {
-                    // 2. Если поле очистили - показываем статический список
-                    renderSearchSuggestions(getStaticSuggestionsList());
-                    UI.searchSuggestions.classList.add('show');
-                }
-
-                // Запуск фильтрации сетки (с debounce)
-                handleSearchInput(val);
+                toggleMenu(UI.searchSuggestions, e); 
             });
             
             // Предотвращение закрытия меню при взаимодействии внутри него
@@ -951,17 +870,21 @@
             UI.searchInput.value = state.search;
             if(state.search) UI.clearButton.style.display = 'block';
             updateSortButtonUI();
+            
+            // Обработчик ввода текста: скрывает меню предложений сразу при начале ввода
+            UI.searchInput.addEventListener('input', (e) => {
+                UI.searchSuggestions.classList.remove('show');
+                handleSearchInput(e);
+            });
 
             // Обработчик кнопки очистки поиска
             UI.clearButton.addEventListener('click', (e) => {
                 UI.searchInput.value = '';
-                // Показываем статические подсказки при очистке
-                renderSearchSuggestions(getStaticSuggestionsList());
-                UI.searchSuggestions.classList.add('show');
+                handleSearchInput({ target: UI.searchInput });
                 
-                handleSearchInput(''); // Очищаем фильтр сетки
+                // Открываем меню предложений и устанавливаем фокус
+                openMenu(UI.searchSuggestions, e); 
                 UI.searchInput.focus(); 
-                e.stopPropagation();
             });
 
             // Обработчик кнопки сортировки
@@ -991,7 +914,7 @@
             initYearFilters();
             renderAlbums();
             initScrollLogic();
-            initSearchLogic(); // Новая логика поиска
+            initSearchSuggestions();
 
             // --- ТЕМНАЯ / СВЕТЛАЯ ТЕМА ---
             const applyTheme = (isDark) => {
